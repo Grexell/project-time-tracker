@@ -1,0 +1,26 @@
+<div class="background"></div>
+
+<ng-template #loginDialog>
+    <mat-dialog-content class="mat-typography">
+        <h3>Login</h3>
+        <p>Enter profile details.</p>
+        <mat-form-field class="full-width">
+            <mat-label>Username</mat-label>
+            <input matInput type="text" [(ngModel)]="username">
+        </mat-form-field>
+        <mat-form-field class="full-width">
+            <mat-label>Password</mat-label>
+            <input matInput *ngIf="!showPassword" type="password" [(ngModel)]="password" matAutosize="true">
+            <input matInput *ngIf="showPassword" type="text" [(ngModel)]="password">
+            <button mat-button matSuffix mat-icon-button (click)="togglePassword()">
+                <mat-icon>remove_red_eye</mat-icon>
+            </button>
+            <!-- <button *ngIf="showPassword" mat-button matSuffix mat-icon-button (click)="password = ''"> -->
+                <!-- <mat-icon>eye-splash</mat-icon> -->
+            <!-- </button> -->
+        </mat-form-field>
+    </mat-dialog-content>
+    <mat-dialog-actions align="end">
+        <button mat-flat-button cdkFocusInitial color="primary" (click)="login()" [disabled]="!username || !password">Login</button>
+    </mat-dialog-actions>
+</ng-template>

@@ -1,0 +1,1 @@
+docker run --name postgresql-container -p 5432:5432 -e POSTGRES_PASSWORD=somePassword -e POSTGRES_DB=tracker -v /Users/ddemesh/Downloads/projects/time-tracker/database/src/sql/:/docker-entrypoint-initdb.d/ -d postgres:latest
