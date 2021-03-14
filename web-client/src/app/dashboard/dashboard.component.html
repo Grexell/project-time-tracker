@@ -1,5 +1,13 @@
+<mat-tab-group color="primary" backgroundColor="primary" *ngIf="portalType === 'admin'">
+    <mat-tab label="Users">
+        <app-user-tab></app-user-tab>
+    </mat-tab>
+    <mat-tab label="Settings">
+        Content 2
+    </mat-tab>
+</mat-tab-group>
 
-<mat-tab-group color="primary" backgroundColor="primary">
+<mat-tab-group color="primary" backgroundColor="primary" *ngIf="portalType === 'manager'">
     <mat-tab label="Projects">
         Content 1
     </mat-tab>
@@ -7,6 +15,18 @@
         Content 2
     </mat-tab>
     <mat-tab label="Add">
+        Content 3
+    </mat-tab>
+</mat-tab-group>
+
+<mat-tab-group color="primary" backgroundColor="primary" *ngIf="portalType === 'user'">
+    <mat-tab label="Projects">
+        Content 1
+    </mat-tab>
+    <mat-tab label="Vacation">
+        Content 2
+    </mat-tab>
+    <mat-tab label="Report">
         Content 3
     </mat-tab>
 </mat-tab-group>

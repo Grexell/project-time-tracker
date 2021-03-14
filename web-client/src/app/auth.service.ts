@@ -14,18 +14,24 @@ export class AuthService {
   constructor(private api: ApiService) {}
 
   isAuthorized() {
-    return this.isLogined;
+    // return this.isLogined;
+    return true;
+  }
+
+  getPortalType() {
+    return 'admin';
   }
 
   login(username, password) {
-    return this.api.login({
-      username, password, clientSecret: this.clientSecret
+    return of({
+    // return this.api.login({
+    //   username, password, clientSecret: this.clientSecret
     }).pipe(
         map(value => {
           this.token = value;
           this.isLogined = true;
         })
-    )
+    );
   }
 
   logout() {

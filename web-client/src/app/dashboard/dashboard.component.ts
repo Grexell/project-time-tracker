@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import {AuthService} from '../auth.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -6,8 +7,11 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./dashboard.component.scss']
 })
 export class DashboardComponent implements OnInit {
+  portalType: string;
 
-  constructor() { }
+  constructor(private auth: AuthService) {
+    this.portalType = auth.getPortalType();
+  }
 
   ngOnInit(): void {
   }

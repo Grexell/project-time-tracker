@@ -1,0 +1,77 @@
+<mat-grid-list cols="3">
+    <mat-grid-tile colspan="2" rowspan="1">
+        <table mat-table [dataSource]="users" multiTemplateDataRows class="mat-elevation-z8">
+            <ng-container matColumnDef="User">
+                <th mat-header-cell *matHeaderCellDef>User</th>
+                <td mat-cell *matCellDef="let element">{{element.firstName + ' ' + element.secondName}}</td>
+            </ng-container>
+            <ng-container matColumnDef="Email">
+                <th mat-header-cell *matHeaderCellDef>Email</th>
+                <td mat-cell *matCellDef="let element">{{element.email}}</td>
+            </ng-container>
+            <ng-container matColumnDef="Role">
+                <th mat-header-cell *matHeaderCellDef>Role</th>
+                <td mat-cell *matCellDef="let element">{{element.role}}</td>
+            </ng-container>
+
+            <!-- Expanded Content Column - The detail row is made up of this one column that spans across all columns -->
+            <ng-container matColumnDef="expandedDetail">
+                <td mat-cell *matCellDef="let element" [attr.colspan]="columnsToDisplay.length">
+                    <div class="example-element-detail" [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'">
+                        <mat-chip-list aria-label="Fish selection" style="margin: 15px 0">
+                            <mat-chip color="accent" selected (click)="edit(element)">Edit</mat-chip>
+                            <mat-chip color="warn" selected>Delete</mat-chip>
+                        </mat-chip-list>
+                    </div>
+                </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>
+            <tr mat-row *matRowDef="let element; columns: columnsToDisplay;"
+                class="example-element-row"
+                [class.example-expanded-row]="expandedElement === element"
+                (click)="expandedElement = expandedElement === element ? null : element">
+            </tr>
+            <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="example-detail-row"></tr>
+        </table>
+    </mat-grid-tile>
+    <mat-grid-tile colspan="1">
+        <div class="full-width">
+            <div class="mat-title">{{editAction === 'new' ? 'New': 'Edit'}} User</div>
+            <mat-form-field class="full-width">
+                <mat-label>First name</mat-label>
+                <input matInput #firstNameInput="ngModel" type="text" [(ngModel)]="editUser.firstName" required>
+            </mat-form-field>
+            <mat-form-field class="full-width">
+                <mat-label>Last name</mat-label>
+                <input matInput #secondNameInput="ngModel" type="text" [(ngModel)]="editUser.secondName" required>
+            </mat-form-field>
+            <mat-form-field class="full-width">
+                <mat-label>Email</mat-label>
+                <input matInput #emailInput="ngModel" type="email" [(ngModel)]="editUser.email" required>
+                <mat-error *ngIf="emailInput.invalid">incorrect email</mat-error>
+            </mat-form-field>
+            <mat-form-field class="full-width">
+                <mat-label>Password</mat-label>
+                <input matInput #passwordInput="ngModel" type="text" [(ngModel)]="editUser.password" required>
+            </mat-form-field>
+            <p>
+                <mat-form-field class="full-width">
+                    <mat-label>Role</mat-label>
+                    <mat-select [(value)]="editUser.role" required>
+                        <mat-option disabled>None</mat-option>
+                        <mat-option value="user">User</mat-option>
+                        <mat-option value="manager">Manager</mat-option>
+                        <mat-option value="admin">Admin</mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </p>
+            <button style="margin-right: 15px;" mat-stroked-button
+                    (click)="clearForm(); firstNameInput.reset();secondNameInput.reset(); emailInput.reset(); passwordInput.reset();">Cancel</button>
+            <button [disabled]="firstNameInput.invalid || secondNameInput.invalid || emailInput.invalid || passwordInput.invalid || !editUser.role"
+                    mat-flat-button color="primary"
+                    (click)="saveUser(); firstNameInput.reset();secondNameInput.reset(); emailInput.reset(); passwordInput.reset();">
+                {{editAction === 'new' ? 'Create': 'Save'}}</button>
+        </div>
+    </mat-grid-tile>
+</mat-grid-list>

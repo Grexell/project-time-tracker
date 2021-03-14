@@ -18,6 +18,11 @@ import {MatMenuModule} from '@angular/material/menu';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { ProfileComponent } from './profile/profile.component';
 import {HttpClientModule} from "@angular/common/http";
+import { UserTabComponent } from './admin/user-tab/user-tab.component';
+import {MatGridListModule} from "@angular/material/grid-list";
+import {MatTableModule} from "@angular/material/table";
+import {MatSelectModule} from "@angular/material/select";
+import {MatChipsModule} from "@angular/material/chips";
 
 @NgModule({
   declarations: [
@@ -25,23 +30,28 @@ import {HttpClientModule} from "@angular/common/http";
     LoginComponent,
     EmployeeComponent,
     DashboardComponent,
-    ProfileComponent
+    ProfileComponent,
+    UserTabComponent
   ],
-  imports: [
-    BrowserModule,
-    HttpClientModule,
-    FormsModule,
-    AppRoutingModule,
-    MatDialogModule,
-    MatInputModule,
-    MatButtonModule,
-    MatIconModule,
-    MatFormFieldModule,
-    MatToolbarModule,
-    MatMenuModule,
-    MatTabsModule,
-    BrowserAnimationsModule
-  ],
+    imports: [
+        BrowserModule,
+        HttpClientModule,
+        FormsModule,
+        AppRoutingModule,
+        MatDialogModule,
+        MatInputModule,
+        MatButtonModule,
+        MatIconModule,
+        MatFormFieldModule,
+        MatToolbarModule,
+        MatMenuModule,
+        MatTabsModule,
+        BrowserAnimationsModule,
+        MatGridListModule,
+        MatTableModule,
+        MatSelectModule,
+        MatChipsModule
+    ],
   providers: [],
   bootstrap: [AppComponent]
 })
