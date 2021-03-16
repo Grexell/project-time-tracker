@@ -1,2 +1,1 @@
-docker rm -f postgresql-container
-# some-mysql
+docker rm -f some-mysql
