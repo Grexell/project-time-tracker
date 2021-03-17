@@ -23,6 +23,11 @@ import {MatGridListModule} from "@angular/material/grid-list";
 import {MatTableModule} from "@angular/material/table";
 import {MatSelectModule} from "@angular/material/select";
 import {MatChipsModule} from "@angular/material/chips";
+import { SettingsComponent } from './admin/settings/settings.component';
+import {MatDividerModule} from '@angular/material/divider';
+import {MatListModule} from '@angular/material/list';
+import {MatDatepickerModule} from "@angular/material/datepicker";
+import {MatNativeDateModule} from "@angular/material/core";
 
 @NgModule({
   declarations: [
@@ -31,7 +36,8 @@ import {MatChipsModule} from "@angular/material/chips";
     EmployeeComponent,
     DashboardComponent,
     ProfileComponent,
-    UserTabComponent
+    UserTabComponent,
+    SettingsComponent
   ],
     imports: [
         BrowserModule,
@@ -50,7 +56,11 @@ import {MatChipsModule} from "@angular/material/chips";
         MatGridListModule,
         MatTableModule,
         MatSelectModule,
-        MatChipsModule
+        MatChipsModule,
+        MatDividerModule,
+        MatListModule,
+        MatDatepickerModule,
+        MatNativeDateModule,
     ],
   providers: [],
   bootstrap: [AppComponent]
