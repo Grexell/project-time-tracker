@@ -12,3 +12,23 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 .spacer {
     flex: 1 1 auto;
 }
+
+.selected-start-date {
+    border-radius: 999px;
+    background-color: #7e3ff2;
+}
+
+.selected-shift-date {
+    border-radius: 999px;
+    background-color: #ee6002;
+}
+
+.start-date {
+    border-radius: 999px;
+    background-color: #b794f6;
+}
+
+.shift-date {
+    border-radius: 999px;
+    background-color: #ff8d00;
+}

@@ -20,21 +20,22 @@
         </mat-selection-list>
     </div>
     <div class="col-4">
-        <mat-calendar [dateClass]="dateClass()" [selected]="selectedDate" (selectedChange)="onSelect($event)"></mat-calendar>
+        <mat-calendar #calendar [dateClass]="dateClass()" [selected]="selectedDate" (selectedChange)="onSelect($event)"></mat-calendar>
+
     </div>
     <div class="col-4">
         <mat-list>
             <div class="mat-title">Holidays</div>
-            <mat-list-item *ngFor="let calendar of calendars; last as last">
+            <mat-list-item *ngFor="let holiday of holidays; last as last">
                 <div class="d-flex flex-grow-1 justify-content-between align-items-center">
-                    <div mat-line>{{calendar.locale}}</div>
-                    <button mat-icon-button color="warn" (click)="deleteCalendar(calendar)">
+                    <div mat-line>{{(holiday.startDate | date: 'yyyy-MM-dd') + (holiday.transferDate? ' -> ' + (holiday.transferDate | date: 'yyyy-MM-dd'): '')}}</div>
+                    <button mat-icon-button color="warn" (click)="deleteHoliday(holiday)">
                         <mat-icon>delete</mat-icon>
                     </button>
                 </div>
                 <mat-divider *ngIf="!last"></mat-divider>
             </mat-list-item>
-            <button class="full-width" mat-raised-button color="primary" [disabled]="!selectedCalendar" (click)="addCalendar(locale.value); locale.value = ''">Add</button>
+            <button class="full-width" mat-raised-button color="primary" [disabled]="!selectedCalendar || !holiday.startDate" (click)="addHoliday();">Add</button>
         </mat-list>
     </div>
 </div>
