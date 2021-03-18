@@ -9,17 +9,29 @@ import {map} from "rxjs/operators";
 export class AuthService {
   private clientSecret = 'asdf';
 
-  private isLogined = false;
+  private isLogined = true;
+  private portalType: string;
   private token: any;
   constructor(private api: ApiService) {}
 
   isAuthorized() {
-    // return this.isLogined;
-    return true;
+    return this.isLogined;
+  }
+
+  isSelectedPortal() {
+    return !!this.portalType;
   }
 
   getPortalType() {
-    return 'admin';
+    return this.portalType;
+  }
+
+  selectPortal(portalType: string) {
+    return of(portalType).pipe(
+        map(value => {
+          this.portalType = value;
+        })
+    );
   }
 
   login(username, password) {
@@ -36,6 +48,7 @@ export class AuthService {
 
   logout() {
     this.isLogined = false;
+    this.portalType = null;
     return of(true);
   }
 }

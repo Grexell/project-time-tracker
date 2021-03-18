@@ -5,10 +5,12 @@ import { AuthGuard } from './auth.guard';
 import { EmployeeComponent } from './employee/employee.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { ProfileComponent } from './profile/profile.component';
+import {PortalSelectComponent} from "./portal-select/portal-select.component";
 
 const routes: Routes = [
   {
-    component: EmployeeComponent, path: 'home', canActivate: [AuthGuard], canActivateChild: [AuthGuard], data: {isAuthorized: true},
+    component: EmployeeComponent, path: 'home', canActivate: [AuthGuard], canActivateChild: [AuthGuard],
+    data: { isAuthorized: true, isSelectedPortal: true },
     children: [
       {
         component: ProfileComponent, path: 'profile'
@@ -19,7 +21,12 @@ const routes: Routes = [
     ]
   },
   {
-    component: LoginComponent, path: '', canActivate: [AuthGuard], canActivateChild: [AuthGuard], data: {isAuthorized: false}
+    component: PortalSelectComponent, path: 'portal', canActivate: [AuthGuard], canActivateChild: [AuthGuard],
+    data: { isAuthorized: true, isSelectedPortal: false }
+  },
+  {
+    component: LoginComponent, path: '', canActivate: [AuthGuard], canActivateChild: [AuthGuard],
+    data: { isAuthorized: false, isSelectedPortal: false }
   }
 ];
 

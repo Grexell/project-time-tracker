@@ -28,6 +28,8 @@ import {MatDividerModule} from '@angular/material/divider';
 import {MatListModule} from '@angular/material/list';
 import {MatDatepickerModule} from "@angular/material/datepicker";
 import {MatNativeDateModule} from "@angular/material/core";
+import { ProjectTabComponent } from './manager/project-tab/project-tab.component';
+import { PortalSelectComponent } from './portal-select/portal-select.component';
 
 @NgModule({
   declarations: [
@@ -37,7 +39,9 @@ import {MatNativeDateModule} from "@angular/material/core";
     DashboardComponent,
     ProfileComponent,
     UserTabComponent,
-    SettingsComponent
+    SettingsComponent,
+    ProjectTabComponent,
+    PortalSelectComponent
   ],
     imports: [
         BrowserModule,

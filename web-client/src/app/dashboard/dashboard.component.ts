@@ -10,10 +10,10 @@ export class DashboardComponent implements OnInit {
   portalType: string;
 
   constructor(private auth: AuthService) {
-    this.portalType = auth.getPortalType();
   }
 
   ngOnInit(): void {
+    this.portalType = this.auth.getPortalType();
   }
 
 }
