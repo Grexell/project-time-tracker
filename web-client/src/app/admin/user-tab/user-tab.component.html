@@ -1,5 +1,5 @@
-<div class="row p-4">
-    <div class="col-8">
+<div class="d-flex py-3">
+    <div class="col-8 px-3">
         <table mat-table [dataSource]="users" multiTemplateDataRows class="mat-elevation-z8">
             <ng-container matColumnDef="User">
                 <th mat-header-cell *matHeaderCellDef>User</th>
@@ -34,7 +34,7 @@
             <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="example-detail-row"></tr>
         </table>
     </div>
-    <div class="col-4">
+    <div class="col-4 px-3">
         <div class="full-width">
             <div class="mat-title">{{editAction === 'new' ? 'New': 'Edit'}} User</div>
             <mat-form-field class="full-width">

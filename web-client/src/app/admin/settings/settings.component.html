@@ -1,5 +1,5 @@
-<div class="row p-4">
-    <div class="col-4">
+<div class="d-flex py-3">
+    <div class="col-4 px-3">
         <mat-selection-list multiple="false" (selectionChange)="selectCalendar($event)">
             <div class="mat-title">Locales</div>
             <mat-list-option *ngFor="let calendar of calendars; last as last" [value]="calendar">
@@ -19,11 +19,11 @@
             <button class="full-width" mat-raised-button color="primary" (click)="addCalendar(locale.value); locale.value = ''">Add</button>
         </mat-selection-list>
     </div>
-    <div class="col-4">
+    <div class="col-4 px-3">
         <mat-calendar #calendar [dateClass]="dateClass()" [selected]="selectedDate" (selectedChange)="onSelect($event)"></mat-calendar>
 
     </div>
-    <div class="col-4">
+    <div class="col-4 px-3">
         <mat-list>
             <div class="mat-title">Holidays</div>
             <mat-list-item *ngFor="let holiday of holidays; last as last">
