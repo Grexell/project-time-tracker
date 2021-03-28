@@ -1,1 +1,30 @@
-<p>project-tab works!</p>
+<div class="d-flex py-3">
+    <div class="col-4 px-3">
+        <div class="d-flex align-baseline gap-4">
+            <div class="mat-title">Customers</div>
+            <mat-chip class="pointer" selected color="accent" (click)="openNewCustomerModal()">Add</mat-chip>
+        </div>
+        <mat-selection-list [(ngModel)]="selectedCustomers">
+            <mat-list-option *ngFor="let customer of customers" checkboxPosition="before" [value]="customer">
+                <div>
+                    {{customer.name}}
+                    <button mat-icon-button color="primary" (click)="openEditCustomerModal(customer); $event.stopPropagation()">
+                        <mat-icon>mode_edit</mat-icon>
+                    </button>
+                    <button mat-icon-button color="warn" (click)="openRemoveCustomerModal(customer); $event.stopPropagation()">
+                        <mat-icon>delete</mat-icon>
+                    </button>
+                </div>
+            </mat-list-option>
+        </mat-selection-list>
+    </div>
+    <div class="col-8 px-3">
+        <div class="mat-title">Projects</div>
+        <mat-chip-list>
+            <mat-chip *ngFor="let customer of selectedCustomers" selectable="false" removable="true" (removed)="unselectCustomer(customer)">
+                {{customer.name}}
+                <mat-icon matChipRemove>cancel</mat-icon>
+            </mat-chip>
+        </mat-chip-list>
+    </div>
+</div>

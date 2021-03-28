@@ -75,7 +75,8 @@ create table report(
 
 create table customer(
   id bigint primary key auto_increment,
-  name varchar(200) not null unique
+  name varchar(200) not null unique,
+  contact varchar(200)
 );
 
 create table customer_project(
