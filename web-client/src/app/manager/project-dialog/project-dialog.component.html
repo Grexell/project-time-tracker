@@ -1,0 +1,87 @@
+<mat-dialog-content class="mat-typography">
+    <h3>Project</h3>
+    <p>Enter project details.</p>
+    <div class="row">
+        <div class="col-3">
+            <mat-form-field class="full-width">
+                <mat-label>Name</mat-label>
+                <input matInput type="text" [(ngModel)]="data.project.name">
+            </mat-form-field>
+            <div class="row">
+                <mat-form-field class="col">
+                    <mat-label>Start Date</mat-label>
+                    <input matInput [matDatepicker]="startDate" [(ngModel)]="data.project.startDate">
+                    <mat-datepicker-toggle matSuffix [for]="startDate"></mat-datepicker-toggle>
+                    <mat-datepicker #startDate></mat-datepicker>
+                </mat-form-field>
+                <mat-form-field class="col">
+                    <mat-label>End Date</mat-label>
+                    <input matInput [matDatepicker]="endDate" [(ngModel)]="data.project.endDate">
+                    <mat-datepicker-toggle matSuffix [for]="endDate"></mat-datepicker-toggle>
+                    <mat-datepicker #endDate></mat-datepicker>
+                </mat-form-field>
+            </div>
+            <mat-form-field class="full-width">
+                <mat-label>Budget</mat-label>
+                <input matInput type="number" [(ngModel)]="data.project.budget">
+            </mat-form-field>
+        </div>
+        <div class="col-3">
+            <mat-selection-list multiple="false">
+                <div mat-subheader>Selected Customers</div>
+                <mat-list-item *ngFor="let customer of data.project.customers; let i = index">
+                    <div class="d-flex justify-content-between full-width align-items-baseline">
+                        <div>
+                            <div mat-line>{{customer.name}}</div>
+                            <div mat-line> {{customer.contact}} </div>
+                        </div>
+                        <button mat-icon-button color="warn" (click)="removeCustomer(customer); $event.stopPropagation()">
+                            <mat-icon>delete</mat-icon>
+                        </button>
+                    </div>
+                </mat-list-item>
+            </mat-selection-list>
+            <mat-divider></mat-divider>
+            <mat-selection-list #allCustomers multiple="false" (selectionChange)="addCustomer(allCustomers.selectedOptions.selected[0].value);">
+                <div mat-subheader>Available Customers</div>
+                <mat-list-option *ngFor="let customer of data.customers; let i = index" [value]="customer">
+                    <div mat-line>{{customer.name}}</div>
+                    <div mat-line> {{customer.contact}} </div>
+                </mat-list-option>
+            </mat-selection-list>
+        </div>
+        <div class="col-6 user-list">
+            <mat-selection-list multiple="false">
+                <div mat-subheader>Selected Employees</div>
+                <mat-list-item *ngFor="let user of data.project.team; let i = index">
+                    <div class="d-flex justify-content-between full-width align-items-center">
+                        <div>
+                            <div mat-line>{{user.firstName}} {{user.secondName}}</div>
+                            <div mat-line> {{user.position}}</div>
+                        </div>
+                        <mat-form-field appearance="outline" floatLabel="always">
+                            <mat-label>Salary On Project</mat-label>
+                            <input matInput type="number" [(ngModel)]="user.budget" step="100">
+                        </mat-form-field>
+                        <button mat-icon-button color="warn" (click)="removeUser(user); $event.stopPropagation()">
+                            <mat-icon>delete</mat-icon>
+                        </button>
+                    </div>
+                </mat-list-item>
+            </mat-selection-list>
+            <mat-divider></mat-divider>
+            <mat-selection-list #allUsers multiple="false" (selectionChange)="addUser(allUsers.selectedOptions.selected[0].value);">
+                <div mat-subheader>Available Employees</div>
+                <mat-list-option *ngFor="let user of data.users; let i = index" [value]="user">
+                    <div mat-line>{{user.firstName}} {{user.secondName}}</div>
+                    <div mat-line> {{user.position}} - {{user.salary | currency}}</div>
+                </mat-list-option>
+            </mat-selection-list>
+        </div>
+    </div>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+    <button mat-flat-button (click)="dialogRef.close()">Cancel</button>
+    <button mat-flat-button cdkFocusInitial color="primary" (click)="save()"
+            [disabled]="!data.project.name || !data.project.startDate || !data.project.budget">Save</button>
+</mat-dialog-actions>

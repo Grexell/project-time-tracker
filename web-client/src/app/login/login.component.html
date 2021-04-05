@@ -13,7 +13,7 @@
             <input matInput *ngIf="!showPassword" type="password" [(ngModel)]="password" matAutosize="true">
             <input matInput *ngIf="showPassword" type="text" [(ngModel)]="password">
             <button mat-button matSuffix mat-icon-button (click)="togglePassword()">
-                <mat-icon>remove_red_eye</mat-icon>
+                <mat-icon>{{showPassword ? 'eye-splash' : 'remove_red_eye'}}</mat-icon>
             </button>
             <!-- <button *ngIf="showPassword" mat-button matSuffix mat-icon-button (click)="password = ''"> -->
                 <!-- <mat-icon>eye-splash</mat-icon> -->

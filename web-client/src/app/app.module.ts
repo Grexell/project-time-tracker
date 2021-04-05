@@ -32,6 +32,7 @@ import { ProjectTabComponent } from './manager/project-tab/project-tab.component
 import { PortalSelectComponent } from './portal-select/portal-select.component';
 import { CustomerDialogComponent } from './manager/customer-dialog/customer-dialog.component';
 import { ConfirmDialogComponent } from './common/confirm-dialog/confirm-dialog.component';
+import { ProjectDialogComponent } from './manager/project-dialog/project-dialog.component';
 
 @NgModule({
   declarations: [
@@ -45,7 +46,8 @@ import { ConfirmDialogComponent } from './common/confirm-dialog/confirm-dialog.c
     ProjectTabComponent,
     PortalSelectComponent,
     CustomerDialogComponent,
-    ConfirmDialogComponent
+    ConfirmDialogComponent,
+    ProjectDialogComponent
   ],
     imports: [
         BrowserModule,
