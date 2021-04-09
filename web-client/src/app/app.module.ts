@@ -33,6 +33,10 @@ import { PortalSelectComponent } from './portal-select/portal-select.component';
 import { CustomerDialogComponent } from './manager/customer-dialog/customer-dialog.component';
 import { ConfirmDialogComponent } from './common/confirm-dialog/confirm-dialog.component';
 import { ProjectDialogComponent } from './manager/project-dialog/project-dialog.component';
+import { ProjectsComponent } from './user/projects/projects.component';
+import { VacationsComponent } from './user/vacations/vacations.component';
+import { ReportComponent } from './user/report/report.component';
+import { MatButtonToggleModule } from "@angular/material/button-toggle";
 
 @NgModule({
   declarations: [
@@ -47,7 +51,10 @@ import { ProjectDialogComponent } from './manager/project-dialog/project-dialog.
     PortalSelectComponent,
     CustomerDialogComponent,
     ConfirmDialogComponent,
-    ProjectDialogComponent
+    ProjectDialogComponent,
+      ProjectsComponent,
+      VacationsComponent,
+      ReportComponent
   ],
     imports: [
         BrowserModule,
@@ -71,6 +78,7 @@ import { ProjectDialogComponent } from './manager/project-dialog/project-dialog.
         MatListModule,
         MatDatepickerModule,
         MatNativeDateModule,
+        MatButtonToggleModule
     ],
   providers: [],
   bootstrap: [AppComponent]

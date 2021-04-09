@@ -10,7 +10,7 @@ export class AuthService {
   private clientSecret = 'asdf';
 
   private isLogined = true;
-  private portalType: string = 'manager';
+  private portalType: string = 'user';
   private token: any;
   constructor(private api: ApiService) {}
 

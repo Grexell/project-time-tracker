@@ -1,0 +1,68 @@
+<div class="d-flex py-3">
+    <div class="col-1"></div>
+    <div class="col-4 px-3">
+        <div class="row justify-content-center">
+            <div class="col-12">
+                <div class="mat-title">Report</div>
+                <mat-form-field class="full-width">
+                    <mat-label>Project</mat-label>
+                    <mat-select required>
+                        <mat-option>--</mat-option>
+                        <mat-option *ngFor="let project of projects" [value]="project.id">
+                            {{project.name}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <mat-form-field class="full-width">
+                    <mat-label>Task</mat-label>
+                    <mat-select required>
+                        <mat-option>--</mat-option>
+                        <mat-option *ngFor="let project of projects" [value]="project.id">
+                            {{project.name}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <div class="d-flex justify-content-between align-items-center">
+                    <mat-label>Time:</mat-label>
+                    <div>
+                        <mat-form-field [style.width.px]="50" floatLabel="always">
+                            <mat-label>Hours</mat-label>
+                            <input matInput type="number" min="0" max="24" [maxLength]="2">
+                        </mat-form-field>
+                        <span class="mx-2">:</span>
+                        <mat-form-field [style.width.px]="50" floatLabel="always">
+                            <mat-label>Minutes</mat-label>
+                            <input matInput type="number" min="0" max="60" [maxLength]="2">
+                        </mat-form-field>
+                    </div>
+                </div>
+                <mat-form-field class="full-width" appearance="outline">
+                    <textarea matInput cdkTextareaAutosize [cdkAutosizeMinRows]="7" [(ngModel)]="report.text"></textarea>
+                </mat-form-field>
+                <button class="full-width" mat-raised-button color="primary">Add</button>
+            </div>
+        </div>
+    </div>
+    <div class="col-4 px-3">
+        <mat-calendar #calendar></mat-calendar>
+    </div>
+</div>
+<div class="row p-3">
+    <div class="col-1"></div>
+    <div class="col-11">
+        <mat-button-toggle-group [value]="selectedPeriod">
+            <mat-button-toggle value="day">
+                Day
+            </mat-button-toggle>
+            <mat-button-toggle value="week">
+                Week
+            </mat-button-toggle>
+            <mat-button-toggle value="month">
+                Month
+            </mat-button-toggle>
+            <mat-button-toggle value="all">
+                All
+            </mat-button-toggle>
+        </mat-button-toggle-group>
+    </div>
+</div>

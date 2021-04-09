@@ -22,14 +22,14 @@
     </mat-tab>
 </mat-tab-group>
 
-<mat-tab-group color="primary" backgroundColor="primary" *ngIf="portalType === 'user'">
+<mat-tab-group color="primary" backgroundColor="primary" *ngIf="portalType === 'user'" selectedIndex="2">
     <mat-tab label="Projects">
-        Content 1
+        <app-projects></app-projects>
     </mat-tab>
     <mat-tab label="Vacation">
-        Content 2
+        <app-vacations></app-vacations>
     </mat-tab>
     <mat-tab label="Report">
-        Content 3
+        <app-report></app-report>
     </mat-tab>
 </mat-tab-group>
