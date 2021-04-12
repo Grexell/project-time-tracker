@@ -6,6 +6,8 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./vacations-tab.component.scss']
 })
 export class VacationsTabComponent implements OnInit {
+  vacationsByUser = [];
+  vacationsByProject = [];
 
   constructor() { }
 
