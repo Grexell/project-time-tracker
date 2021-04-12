@@ -35,7 +35,8 @@ CREATE TABLE project(
     id bigint primary key auto_increment,
     name nvarchar(100) not null,
     start_date date not null,
-    end_date date
+    end_date date,
+    budget double not null
 );
 
 CREATE TABLE user_project(

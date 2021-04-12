@@ -17,17 +17,17 @@ import {MatTabsModule} from '@angular/material/tabs';
 import {MatMenuModule} from '@angular/material/menu';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { ProfileComponent } from './profile/profile.component';
-import {HttpClientModule} from "@angular/common/http";
+import {HttpClientModule} from '@angular/common/http';
 import { UserTabComponent } from './admin/user-tab/user-tab.component';
-import {MatGridListModule} from "@angular/material/grid-list";
-import {MatTableModule} from "@angular/material/table";
-import {MatSelectModule} from "@angular/material/select";
-import {MatChipsModule} from "@angular/material/chips";
+import {MatGridListModule} from '@angular/material/grid-list';
+import {MatTableModule} from '@angular/material/table';
+import {MatSelectModule} from '@angular/material/select';
+import {MatChipsModule} from '@angular/material/chips';
 import { SettingsComponent } from './admin/settings/settings.component';
 import {MatDividerModule} from '@angular/material/divider';
 import {MatListModule} from '@angular/material/list';
-import {MatDatepickerModule} from "@angular/material/datepicker";
-import {MatNativeDateModule} from "@angular/material/core";
+import {MatDatepickerModule} from '@angular/material/datepicker';
+import {MatNativeDateModule} from '@angular/material/core';
 import { ProjectTabComponent } from './manager/project-tab/project-tab.component';
 import { PortalSelectComponent } from './portal-select/portal-select.component';
 import { CustomerDialogComponent } from './manager/customer-dialog/customer-dialog.component';
@@ -36,7 +36,10 @@ import { ProjectDialogComponent } from './manager/project-dialog/project-dialog.
 import { ProjectsComponent } from './user/projects/projects.component';
 import { VacationsComponent } from './user/vacations/vacations.component';
 import { ReportComponent } from './user/report/report.component';
-import { MatButtonToggleModule } from "@angular/material/button-toggle";
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import { VacationsTabComponent } from './manager/vacations-tab/vacations-tab.component';
+import {UsersTabComponent} from './manager/users-tab/users-tab.component';
+import {MatExpansionModule} from "@angular/material/expansion";
 
 @NgModule({
   declarations: [
@@ -54,7 +57,9 @@ import { MatButtonToggleModule } from "@angular/material/button-toggle";
     ProjectDialogComponent,
       ProjectsComponent,
       VacationsComponent,
-      ReportComponent
+      ReportComponent,
+      VacationsTabComponent,
+      UsersTabComponent
   ],
     imports: [
         BrowserModule,
@@ -78,7 +83,8 @@ import { MatButtonToggleModule } from "@angular/material/button-toggle";
         MatListModule,
         MatDatepickerModule,
         MatNativeDateModule,
-        MatButtonToggleModule
+        MatButtonToggleModule,
+        MatExpansionModule
     ],
   providers: [],
   bootstrap: [AppComponent]
