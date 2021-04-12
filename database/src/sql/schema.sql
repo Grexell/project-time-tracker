@@ -152,3 +152,77 @@ insert into customer(name, contact)
 values ('Internal', 'ceo@company.com');-- password = admin
 # insert INTO user_role (user_id, role_id)
 # values ((select id from "user" where email = 'admin@dima'), (select id from role where name = 'admin'));
+
+DELIMITER //
+
+CREATE PROCEDURE add_bonus(user_id, bonus)
+BEGIN
+INSERT INTO bonus(user_id, amount, "date")
+values ((SELECT id FROM user_project up WHERE up.user_id = user_id AND up.project_id = project_id), bonus, CURDATE())
+END //
+
+DELIMITER ;
+
+DELIMITER //
+
+CREATE PROCEDURE increase_salary(user_id, project_id, salary_amount, monthly)
+BEGIN
+    INSERT INTO salary(user_id, amount, change_date, monthly)
+     VALUES ((SELECT id FROM user_project up WHERE up.user_id = user_id AND up.project_id = project_id), salary_amount, CURDATE(), monthly)
+END //
+
+DELIMITER ;
+
+DELIMITER //
+
+CREATE PROCEDURE change_position(user_id, position_id)
+BEGIN
+    INSERT INTO user_position(user_id, position_id, change_date)
+     VALUES (user_id, position_id, CURDATE());
+END //
+
+DELIMITER ;
+
+DELIMITER //
+
+CREATE PROCEDURE create_project(user_id, project, budget, project_id OUT)
+BEGIN
+    INSERT INTO project(name, start_date, budget)
+     VALUES (user_id, project, budget);
+    SET project_id = LAST_INSERT_ID();
+    INSERT INTO user_project(user_id, project_id)
+     SELECT id, project_id FROM user INNER JOIN role r on "user".role_id = r.id WHERE r.name = 'manager';
+END //
+
+DELIMITER ;
+
+DELIMITER //
+
+CREATE PROCEDURE approve_vacation(vacation, user_id)
+BEGIN
+
+END //
+
+DELIMITER ;
+
+DELIMITER //
+
+CREATE PROCEDURE reject_vacation(vacation, user_id)
+BEGIN
+
+END //
+
+DELIMITER ;
+
+DELIMITER //
+
+CREATE PROCEDURE finish_project(project_id, user_id)
+BEGIN
+    DECLARE project bigint default 0;
+    SELECT up.project_id INTO project
+    FROM user
+        INNER JOIN role r on "user".role_id = r.id
+        INNER JOIN user_project up on "user".id = up.user_id WHERE r.name = 'manager'
+END //
+
+DELIMITER ;
