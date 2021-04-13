@@ -1,16 +1,19 @@
 package by.dima.auth.service;
 
+import by.dima.auth.model.Principal;
 import by.dima.model.User;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 public interface UserService {
-    Mono<User> findById(Long id);
-    Mono<User> findByUsernameAndPassword(String username, String password);
+    Mono<Principal> findById(Long id);
+    Mono<Principal> findByUsernameAndPassword(String username, String password);
 
-    Mono<User> create(User user);
-    Mono<User> updatePassword(User user);
-    Mono<User> updateRoles(User user);
+    Mono<Principal> create(Principal user);
+    Mono<Principal> update(Principal user);
+//    Mono<Principal> updatePassword(Principal user);
 
-    Flux<User> findAll();
+//    Mono<User> updateRoles(User user);
+
+    Flux<Principal> findAll();
 }

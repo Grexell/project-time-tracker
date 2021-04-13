@@ -1,36 +1,47 @@
 package by.dima.auth.controller;
 
 import by.dima.auth.dao.UserDao;
-import by.dima.model.User;
+import by.dima.auth.model.Principal;
 import by.dima.auth.service.UserService;
+import by.dima.utils.TokenUtils;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+
+import static by.dima.utils.TokenUtils.ADMIN_ROLE;
 
 @RestController
 @RequestMapping("/user")
 public class UserController {
     private final UserService userService;
-    private final UserDao userDao;
 
-    public UserController(UserService userService, UserDao userDao) {
+    public UserController(UserService userService) {
         this.userService = userService;
-        this.userDao = userDao;
     }
 
     @GetMapping
-    public Flux<User> getUsers() {
-        return userService.findAll();
+    public ResponseEntity<Flux<Principal>> getUsers(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
+        if (TokenUtils.is(authHeader, ADMIN_ROLE)) {
+            return ResponseEntity.ok(userService.findAll());
+        }
+        return ResponseEntity.badRequest().build();
     }
 
     @PostMapping
-    public Mono<User> createUser(@RequestBody User user, @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
-        return userService.create(user);
+    public ResponseEntity<Mono<Principal>> createUser(@RequestBody Principal user, @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
+        if (TokenUtils.is(authHeader, ADMIN_ROLE)) {
+            return ResponseEntity.ok(userService.create(user));
+        }
+        return ResponseEntity.badRequest().build();
     }
 
-    @GetMapping("{id}")
-    public Mono<User> getUserById(@PathVariable Long id) {
-        return userService.findById(id);
+    @PutMapping
+    public ResponseEntity<Mono<Principal>> updateUser(@RequestBody Principal user, @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
+        if (TokenUtils.is(authHeader, ADMIN_ROLE)) {
+            return ResponseEntity.ok(userService.update(user));
+        }
+        return ResponseEntity.badRequest().build();
     }
 }

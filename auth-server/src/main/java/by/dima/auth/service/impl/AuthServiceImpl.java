@@ -3,7 +3,6 @@ package by.dima.auth.service.impl;
 import by.dima.auth.dto.RefreshToken;
 import by.dima.auth.dto.Token;
 import by.dima.auth.dto.TokenRequest;
-import by.dima.model.Role;
 import by.dima.model.User;
 import by.dima.auth.service.AuthService;
 import by.dima.auth.service.UserService;
@@ -15,7 +14,6 @@ import reactor.core.publisher.Mono;
 
 import java.sql.Date;
 import java.time.Instant;
-import java.util.stream.Collectors;
 
 @Service
 public class AuthServiceImpl implements AuthService {
@@ -50,8 +48,8 @@ public class AuthServiceImpl implements AuthService {
         Algorithm algorithm = Algorithm.HMAC512(clientSecret);
         String accessToken = JWT.create()
                 .withClaim("userId", user.getId())
-                .withClaim("user", user.getUsername())
-                .withClaim("roles", user.getRoles().stream().map(Role::getName).collect(Collectors.toList()))
+                .withClaim("user", user.getEmail())
+                .withClaim("role", user.getRole().getName())
                 .withExpiresAt(Date.from(Instant.now().plusMillis(ACCESS_EXPIRATION_TIME))).sign(algorithm);
         String refreshToken = JWT.create()
                 .withClaim("userId", user.getId())

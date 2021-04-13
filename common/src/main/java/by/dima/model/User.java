@@ -12,8 +12,10 @@ import java.util.List;
 public class User {
     @Id
     private Long id;
-    private String username;
+    private String firstName;
+    private String secondName;
+    private String email;
     private String password;
     @Transient
-    private List<Role> roles;
+    private Role role;
 }

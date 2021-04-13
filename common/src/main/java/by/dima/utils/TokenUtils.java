@@ -5,8 +5,6 @@ import by.dima.model.User;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.interfaces.DecodedJWT;
 
-import java.util.stream.Collectors;
-
 public class TokenUtils {
     public static final String ADMIN_ROLE = "admin";
     public static final String MANGER_ROLE = "manager";
@@ -16,19 +14,16 @@ public class TokenUtils {
         User user = new User();
         DecodedJWT jwt = JWT.decode(authHeader);
         user.setId(jwt.getClaim("userId").asLong());
-        user.setUsername(jwt.getClaim("username").asString());
-        user.setRoles(jwt.getClaim("roles")
-                .asList(String.class)
-                .stream()
-                .map(Role::new)
-                .collect(Collectors.toList()));
+        user.setEmail(jwt.getClaim("username").asString());
+        user.setRole(new Role(jwt.getClaim("role").asString()));
         return user;
     }
 
+    public static boolean is(String userToken, String role) {
+        return is(extractUser(userToken), role);
+    }
+
     public static boolean is(User user, String role) {
-        return user.getRoles()
-                .stream()
-                .map(Role::getName)
-                .anyMatch(role::equals);
+        return user.getRole().getName().equalsIgnoreCase(role);
     }
 }
