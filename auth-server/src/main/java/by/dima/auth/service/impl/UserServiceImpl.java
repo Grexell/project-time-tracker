@@ -48,7 +48,10 @@ public class UserServiceImpl implements UserService {
                         principal.setEmail(user.getEmail());
                         principal.setFirstName(user.getFirstName());
                         principal.setSecondName(user.getSecondName());
-                        principal.setPassword(passwordEncoder.encode(user.getPassword()));
+                        String newPassword = user.getPassword();
+                        if (newPassword != null && !newPassword.isEmpty()) {
+                            principal.setPassword(passwordEncoder.encode(newPassword));
+                        }
                         principal.setRoleId(user.getRole().getId());
                     })
                     .flatMap(userDao::save);
