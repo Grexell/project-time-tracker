@@ -37,13 +37,8 @@
 		</dependency>
 
 		<dependency>
-			<groupId>io.r2dbc</groupId>
-			<artifactId>r2dbc-postgresql</artifactId>
-			<scope>runtime</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.postgresql</groupId>
-			<artifactId>postgresql</artifactId>
+			<groupId>dev.miku</groupId>
+			<artifactId>r2dbc-mysql</artifactId>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>

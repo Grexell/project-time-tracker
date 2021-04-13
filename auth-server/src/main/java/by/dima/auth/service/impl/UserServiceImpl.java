@@ -37,6 +37,7 @@ public class UserServiceImpl implements UserService {
         user.setId(null);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setRoleId(user.getRole().getId());
+        user.setCalendarId(user.getCalendar().getId());
         return userDao.save(user);
     }
 
@@ -48,6 +49,7 @@ public class UserServiceImpl implements UserService {
                         principal.setEmail(user.getEmail());
                         principal.setFirstName(user.getFirstName());
                         principal.setSecondName(user.getSecondName());
+                        principal.setCalendarId(user.getCalendar().getId());
                         String newPassword = user.getPassword();
                         if (newPassword != null && !newPassword.isEmpty()) {
                             principal.setPassword(passwordEncoder.encode(newPassword));
