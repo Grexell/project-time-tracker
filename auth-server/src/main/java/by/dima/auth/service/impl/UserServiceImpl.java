@@ -28,7 +28,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Mono<Principal> findByUsernameAndPassword(String username, String password) {
-        return loadUserRoles(userDao.findByUsername(username))
+        return loadUserRoles(userDao.findByEmail(username))
                 .filter(user -> passwordEncoder.matches(password, user.getPassword()));
     }
 
@@ -82,6 +82,6 @@ public class UserServiceImpl implements UserService {
     }
 
     private Mono<Principal> loadUserRoles(Mono<Principal> userMono) {
-        return userMono.doOnNext(user -> roleDao.findById(user.getRoleId()).doOnNext(user::setRole));
+        return userMono.flatMap(user -> roleDao.findById(user.getRoleId()).doOnNext(user::setRole).thenReturn(user));
     }
 }

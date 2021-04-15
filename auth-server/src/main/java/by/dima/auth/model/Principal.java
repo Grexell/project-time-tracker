@@ -5,10 +5,11 @@ import by.dima.model.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.springframework.data.annotation.Transient;
 import org.springframework.data.relational.core.mapping.Table;
 
 @Data
-@Table("\"user\"")
+@Table("user")
 @EqualsAndHashCode(callSuper = true)
 public class Principal extends User {
     private String password;
@@ -16,5 +17,6 @@ public class Principal extends User {
     private long roleId;
     @JsonIgnore
     private long calendarId;
+    @Transient
     private Calendar calendar;
 }

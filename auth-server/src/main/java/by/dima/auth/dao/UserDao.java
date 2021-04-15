@@ -6,5 +6,5 @@ import org.springframework.data.repository.reactive.ReactiveCrudRepository;
 import reactor.core.publisher.Mono;
 
 public interface UserDao extends ReactiveCrudRepository<Principal, Long> {
-    Mono<Principal> findByUsername(String username);
+    Mono<Principal> findByEmail(String email);
 }

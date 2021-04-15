@@ -12,4 +12,6 @@ public class Report {
     private String text;
     private Date date;
     private Double hours;
+    private Long taskId;
+    private Long userId;
 }
