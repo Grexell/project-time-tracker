@@ -11,8 +11,17 @@ export class ApiService {
   private host = 'http://localhost:8080/';
   private authUrl = this.host + 'auth/';
   private spinnerRef: OverlayRef = this.cdkSpinnerCreate();
+  private _token: string;
 
   constructor(private http: HttpClient, private overlay: Overlay) { }
+
+  get token(): string {
+    return this._token;
+  }
+
+  set token(value: string) {
+    this._token = value;
+  }
 
   login(tokenRequest) {
     return this.http.post(this.authUrl + 'token', tokenRequest);

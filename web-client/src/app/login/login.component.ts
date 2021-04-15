@@ -34,7 +34,12 @@ export class LoginComponent implements AfterViewInit, OnDestroy {
 
   login() {
     this.auth.login(this.username, this.password).subscribe(() => {
-      this.router.navigate(['home']);
+      if (this.auth.getUserRole() === 'user') {
+        this.auth.selectPortal('user');
+        this.router.navigate(['home']);
+      } else {
+        this.router.navigate(['portal']);
+      }
     });
   }
 }

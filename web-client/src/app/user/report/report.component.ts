@@ -12,10 +12,14 @@ class Report {
   styleUrls: ['./report.component.scss']
 })
 export class ReportComponent implements OnInit {
+  reportTableColumns = ['project', 'budget', 'startDate', 'endDate', 'actions'];
+  selectedPeriod = 'day';
 
   report = new Report();
   projects = [];
-  selectedPeriod = 'day';
+  tasks = [];
+
+  reports = [];
 
   constructor() { }
 

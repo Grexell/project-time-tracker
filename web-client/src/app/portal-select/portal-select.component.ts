@@ -8,8 +8,10 @@ import {Router} from "@angular/router";
     styleUrls: ['./portal-select.component.scss']
 })
 export class PortalSelectComponent implements OnInit {
+    userType: string;
 
     constructor(private auth: AuthService, private router: Router) {
+        this.userType = auth.getUserRole();
     }
 
     ngOnInit(): void {
@@ -19,6 +21,6 @@ export class PortalSelectComponent implements OnInit {
         this.auth.selectPortal(type)
             .subscribe(() => {
                 this.router.navigate(['/home'])
-            })
+            });
     }
 }

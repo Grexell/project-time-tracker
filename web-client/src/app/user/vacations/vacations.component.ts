@@ -6,6 +6,10 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./vacations.component.scss']
 })
 export class VacationsComponent implements OnInit {
+  vacationColumns = [];
+  teamVacationColumns: any[];
+  vacations: any[];
+  teamVacations: any[];
 
   constructor() { }
 
