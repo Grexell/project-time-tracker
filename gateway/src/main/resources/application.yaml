@@ -13,6 +13,10 @@ spring:
             - Path=/auth/**
           filters:
             - RewritePath=/auth/(?<remaining>.*), /$\{remaining}
+        - id: holiday
+          uri: lb://HOLIDAY-SERVER
+          predicates:
+            - Path=/calendar/**
       default-filters:
         - DedupeResponseHeader=Access-Control-Allow-Credentials Access-Control-Allow-Origin, RETAIN_UNIQUE
       globalcors:

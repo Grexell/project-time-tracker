@@ -12,7 +12,8 @@ import reactor.core.publisher.Mono;
 
 import static by.dima.utils.TokenUtils.ADMIN_ROLE;
 
-@RestController("/calendar")
+@RestController
+@RequestMapping("/calendar")
 public class CalendarController {
     private final CalendarService calendarService;
 
@@ -45,7 +46,7 @@ public class CalendarController {
     }
 
     @GetMapping("{calendarId}/holiday")
-    public ResponseEntity<Flux<Holiday>> getCalendars(@PathVariable Long calendarId, @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
+    public ResponseEntity<Flux<Holiday>> getHolidays(@PathVariable Long calendarId, @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
         if (TokenUtils.is(authHeader, ADMIN_ROLE)) {
             return ResponseEntity.ok(calendarService.getHolidays(calendarId));
         }

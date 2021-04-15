@@ -11,7 +11,7 @@
             </ng-container>
             <ng-container matColumnDef="Role">
                 <th mat-header-cell *matHeaderCellDef>Role</th>
-                <td mat-cell *matCellDef="let element">{{element.role}}</td>
+                <td mat-cell *matCellDef="let element">{{element.role.name}}</td>
             </ng-container>
 
             <ng-container matColumnDef="expandedDetail">
@@ -52,16 +52,23 @@
             </mat-form-field>
             <mat-form-field class="full-width">
                 <mat-label>Password</mat-label>
-                <input matInput #passwordInput="ngModel" type="text" [(ngModel)]="editUser.password" required>
+                <input matInput #passwordInput="ngModel" type="text" [(ngModel)]="editUser.password" [required]="editAction === 'new'">
             </mat-form-field>
             <p>
                 <mat-form-field class="full-width">
                     <mat-label>Role</mat-label>
-                    <mat-select [(value)]="editUser.role" required>
+                    <mat-select [(value)]="editUser.role" required [compareWith]="roleComparator">
                         <mat-option disabled>None</mat-option>
-                        <mat-option value="user">User</mat-option>
-                        <mat-option value="manager">Manager</mat-option>
-                        <mat-option value="admin">Admin</mat-option>
+                        <mat-option *ngFor="let role of roles" [value]="role">{{role.name | titlecase}}</mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </p>
+            <p>
+                <mat-form-field class="full-width">
+                    <mat-label>Calendar</mat-label>
+                    <mat-select [(value)]="editUser.calendar" required [compareWith]="calendarComparator">
+                        <mat-option disabled>None</mat-option>
+                        <mat-option *ngFor="let calendar of calendars" [value]="calendar">{{calendar.locale}}</mat-option>
                     </mat-select>
                 </mat-form-field>
             </p>

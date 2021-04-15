@@ -1,6 +1,5 @@
 package by.dima.auth.controller;
 
-import by.dima.auth.dao.UserDao;
 import by.dima.auth.model.Principal;
 import by.dima.auth.service.UserService;
 import by.dima.utils.TokenUtils;
@@ -41,6 +40,14 @@ public class UserController {
     public ResponseEntity<Mono<Principal>> updateUser(@RequestBody Principal user, @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
         if (TokenUtils.is(authHeader, ADMIN_ROLE)) {
             return ResponseEntity.ok(userService.update(user));
+        }
+        return ResponseEntity.badRequest().build();
+    }
+
+    @DeleteMapping("{userId}")
+    public ResponseEntity<Mono<Void>> deleteUser(@PathVariable long userId, @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
+        if (TokenUtils.is(authHeader, ADMIN_ROLE)) {
+            return ResponseEntity.ok(userService.delete(userId));
         }
         return ResponseEntity.badRequest().build();
     }

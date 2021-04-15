@@ -1,9 +1,10 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
 import {of} from "rxjs";
 import {MatCalendar} from "@angular/material/datepicker";
+import {ApiService} from "../../api.service";
 
 class Holiday {
-  constructor(public id?: number, public startDate?: Date, public transferDate?: Date) {
+  constructor(public id?: number, public date?: string, public transferDate?: string) {
   }
 }
 
@@ -13,46 +14,45 @@ class Holiday {
   styleUrls: ['./settings.component.scss']
 })
 export class SettingsComponent implements OnInit {
-    calendars = [
-      {id: 1, locale: 'ru_by'},
-      {id: 2, locale: 'ru_by'},
-      {id: 3, locale: 'ru_by'},
-      {id: 4, locale: 'ru_by'}
-      ];
+  calendars: any[];
   selectedDate: any;
   selectedCalendar: any;
-  holidays = [
-      new Holiday(1, new Date(), new Date('2021-03-17'))
-  ];
+  holidays: any[];
+      // new Holiday(1, new Date(), new Date('2021-03-17'))
+  // ];
   dates = new Set();
   transfers = new Set();
   holiday = new Holiday();
 
   @ViewChild('calendar') calendar: MatCalendar<Date>;
 
-  constructor() { }
+  constructor(private api: ApiService) { }
 
   ngOnInit(): void {
+    this.loadCalendars();
+  }
+
+  private loadCalendars() {
+    this.api.loadCalendars().subscribe(calendars => this.calendars = calendars);
   }
 
   addCalendar(locale) {
-    of({ id: 1, locale })
+    this.api.addCalendar({ locale })
         .subscribe(calendar => this.calendars.push(calendar));
   }
 
   deleteCalendar(calendar) {
-    of(calendar)
+    this.api.deleteCalendar(calendar)
         .subscribe(() => this.calendars.splice(this.calendars.indexOf(calendar), 1));
-    // this.calendars.push({ id: 1, locale });
   }
 
   onSelect($event: any) {
-    if (!this.holiday.startDate) {
-      this.holiday.startDate = $event;
+    if (!this.holiday.date) {
+      this.holiday.date = $event.toISOString();
     } else if (!this.holiday.transferDate) {
-      this.holiday.transferDate = $event;
+      this.holiday.transferDate = $event.toISOString();
     } else {
-      this.holiday.startDate = $event;
+      this.holiday.date = $event.toISOString();
       this.holiday.transferDate = null;
     }
     this.calendar.updateTodaysDate();
@@ -60,34 +60,27 @@ export class SettingsComponent implements OnInit {
 
   dateClass() {
     return (date: Date) => {
-      if (this.holiday && this.holiday.startDate && date.toDateString() == this.holiday.startDate.toDateString()) {
+      const dateStr = date.toISOString().split('T').shift();
+      if (this.holiday && this.holiday.date && dateStr == this.holiday.date) {
         return 'selected-start-date';
-      } else if (this.holiday && this.holiday.transferDate && date.toDateString() == this.holiday.transferDate.toDateString()) {
+      } else if (this.holiday && this.holiday.transferDate && dateStr == this.holiday.transferDate) {
         return 'selected-shift-date';
-      } else if (this.dates && this.dates.has(date.toDateString())) {
+      } else if (this.dates && this.dates.has(dateStr)) {
         return 'start-date';
-      } else if (this.transfers && this.transfers.has(date.toDateString())) {
+      } else if (this.transfers && this.transfers.has(dateStr)) {
         return 'shift-date';
       }
       return '';
     };
   }
 
-  loadHolidays() {
-    of([
-      new Holiday(1, new Date(), new Date('2021-03-17'))
-    ])
-        .subscribe(holidays => {
-          this.holidays = holidays;
-          this.splitDates();
-        })
-  }
-
   private splitDates() {
+    this.dates.clear();
+    this.transfers.clear();
     this.holidays.forEach(holiday => {
-      this.dates.add(holiday.startDate.toDateString());
+      this.dates.add(holiday.date);
       if (holiday.transferDate) {
-        this.transfers.add(holiday.transferDate.toDateString());
+        this.transfers.add(holiday.transferDate);
       }
     })
     this.calendar.updateTodaysDate();
@@ -98,20 +91,28 @@ export class SettingsComponent implements OnInit {
     this.loadHolidays();
   }
 
-  deleteHoliday(holiday) {
-    of(holiday)
-        .subscribe(() => {
-          this.holidays.splice(this.holidays.indexOf(holiday), 1);
+  loadHolidays() {
+    this.api.loadHolidays(this.selectedCalendar)
+        .subscribe(holidays => {
+          this.holidays = holidays;
           this.splitDates();
-        });
+        })
   }
 
   addHoliday() {
-    of(this.holiday)
+    this.api.createHoliday(this.selectedCalendar, this.holiday)
         .subscribe(holiday => {
           this.holidays.push(holiday);
           this.holiday = new Holiday();
           this.splitDates();
         })
+  }
+
+  deleteHoliday(holiday) {
+    this.api.deleteHoliday(this.selectedCalendar, holiday)
+        .subscribe(() => {
+          this.holidays.splice(this.holidays.indexOf(holiday), 1);
+          this.splitDates();
+        });
   }
 }

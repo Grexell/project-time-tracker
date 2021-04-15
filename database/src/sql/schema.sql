@@ -25,7 +25,7 @@ CREATE TABLE user(
     password nvarchar(100) not null,
     first_name nvarchar(100) not null,
     second_name nvarchar(100) not null,
-    role_id bigint,
+    role_id bigint not null,
     calendar_id bigint,
     foreign key (role_id) references role(id),
     foreign key (calendar_id) references calendar(id)
@@ -144,9 +144,10 @@ CREATE TABLE vacation(
 #     select * from vacation where ;
 
 insert into role(name) values ('admin'), ('manager'), ('user');
+insert into calendar(locale) values ('be_BY');
 
-insert into user(first_name, second_name, email, password)
-values ('admin', 'admin', 'admin@company.com', '$2a$10$EFEJzuZA3DLrNeB8bIWv9eviqKs05bBkKe3ZQfBn8itQukd5jDFH2');-- password = admin
+insert into user(first_name, second_name, email, password, role_id, calendar_id)
+values ('admin', 'admin', 'admin@company.com', '$2a$10$EFEJzuZA3DLrNeB8bIWv9eviqKs05bBkKe3ZQfBn8itQukd5jDFH2', 1, 1);-- password = admin
 
 insert into customer(name, contact)
 values ('Internal', 'ceo@company.com');-- password = admin

@@ -4,6 +4,7 @@ import by.dima.auth.dao.RoleDao;
 import by.dima.auth.dao.UserDao;
 import by.dima.auth.model.Principal;
 import by.dima.auth.service.UserService;
+import by.dima.model.Calendar;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
@@ -38,7 +39,7 @@ public class UserServiceImpl implements UserService {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setRoleId(user.getRole().getId());
         user.setCalendarId(user.getCalendar().getId());
-        return userDao.save(user);
+        return userDao.save(user).doOnNext(usr -> usr.setPassword(null));
     }
 
     @Override
@@ -56,9 +57,15 @@ public class UserServiceImpl implements UserService {
                         }
                         principal.setRoleId(user.getRole().getId());
                     })
-                    .flatMap(userDao::save);
+                    .flatMap(userDao::save)
+                    .doOnNext(usr -> usr.setPassword(null));
         }
         return Mono.error(new IllegalArgumentException());
+    }
+
+    @Override
+    public Mono<Void> delete(long userId) {
+        return userDao.deleteById(userId);
     }
 
 //    @Override
@@ -78,10 +85,18 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Flux<Principal> findAll() {
-        return userDao.findAll().doOnNext(user -> user.setPassword(null));
+        return userDao.findAll()
+                .flatMap(principal -> loadUserRoles(Mono.just(principal)))
+                .doOnNext(this::loadUserCalendar)
+                .doOnNext(user -> user.setPassword(null));
     }
 
     private Mono<Principal> loadUserRoles(Mono<Principal> userMono) {
         return userMono.flatMap(user -> roleDao.findById(user.getRoleId()).doOnNext(user::setRole).thenReturn(user));
+    }
+
+    private Principal loadUserCalendar(Principal user) {
+        user.setCalendar(new Calendar(user.getCalendarId()));
+        return user;
     }
 }

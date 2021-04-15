@@ -3,6 +3,7 @@ import {HttpClient} from '@angular/common/http';
 import {Overlay, OverlayRef} from '@angular/cdk/overlay';
 import {ComponentPortal} from '@angular/cdk/portal';
 import {MatSpinner} from '@angular/material/progress-spinner';
+import {Observable} from "rxjs";
 
 @Injectable({
   providedIn: 'root'
@@ -10,6 +11,7 @@ import {MatSpinner} from '@angular/material/progress-spinner';
 export class ApiService {
   private host = 'http://localhost:8080/';
   private authUrl = this.host + 'auth/';
+  private calendarUrl = this.host + 'calendar';
   private spinnerRef: OverlayRef = this.cdkSpinnerCreate();
   private _token: string;
 
@@ -27,6 +29,46 @@ export class ApiService {
     return this.http.post(this.authUrl + 'token', tokenRequest);
   }
 
+  loadCalendars(): Observable<any[]> {
+    return this.http.get<any[]>(this.calendarUrl, this.getAuthHeaders());
+  }
+
+  addCalendar(calendar): Observable<any> {
+    return this.http.post<any>(this.calendarUrl, calendar, this.getAuthHeaders());
+  }
+
+  deleteCalendar(calendar): Observable<any> {
+    return this.http.delete<any>(`${this.calendarUrl}/${calendar.id}`, this.getAuthHeaders());
+  }
+
+  loadHolidays(calendar) {
+    return this.http.get<any[]>(`${this.calendarUrl}/${calendar.id}/holiday`, this.getAuthHeaders());
+  }
+
+  createHoliday(calendar, holiday) {
+    return this.http.post<any>(`${this.calendarUrl}/${calendar.id}/holiday`, holiday, this.getAuthHeaders());
+  }
+
+  deleteHoliday(calendar, holiday) {
+    return this.http.delete<any>(`${this.calendarUrl}/${calendar.id}/holiday/${holiday.id}`, this.getAuthHeaders());
+  }
+
+  loadUsers(): Observable<any[]> {
+    return this.http.get<any[]>(this.authUrl + 'user', this.getAuthHeaders());
+  }
+
+  createUser(user) {
+    return this.http.post<any>(this.authUrl + 'user', user, this.getAuthHeaders());
+  }
+
+  updateUser(user) {
+    return this.http.put<any>(this.authUrl + 'user', user, this.getAuthHeaders());
+  }
+
+  private getAuthHeaders() {
+    return {headers: {'Authorization': this.token}};
+  }
+
   private cdkSpinnerCreate() {
     return this.overlay.create({
       hasBackdrop: true,
@@ -37,11 +79,13 @@ export class ApiService {
           .centerVertically()
     });
   }
+
   //TODO: add stopSpinner inside finalize<T>(callback: () => void): MonoTypeOperatorFunction<T> to all http calls
-  showSpinner() {
+  private showSpinner() {
     this.spinnerRef.attach(new ComponentPortal(MatSpinner));
   }
-  stopSpinner() {
+
+  private stopSpinner() {
     this.spinnerRef.detach();
   }
 }
