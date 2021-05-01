@@ -12,6 +12,7 @@ export class ApiService {
   private host = 'http://localhost:8080/';
   private authUrl = this.host + 'auth/';
   private calendarUrl = this.host + 'calendar';
+  private customerUrl = this.host + 'customer';
   private spinnerRef: OverlayRef = this.cdkSpinnerCreate();
   private _token: string;
 
@@ -27,6 +28,22 @@ export class ApiService {
 
   login(tokenRequest) {
     return this.http.post(this.authUrl + 'token', tokenRequest);
+  }
+
+  loadCustomers(): Observable<any[]> {
+    return this.http.get<any[]>(this.customerUrl, this.getAuthHeaders());
+  }
+
+  createCustomer(customer) {
+    return this.http.post<any>(this.customerUrl, customer, this.getAuthHeaders());
+  }
+
+  updateCustomer(customer) {
+    return this.http.put<any>(`${this.customerUrl}/${customer.id}`, customer, this.getAuthHeaders());
+  }
+
+  deleteCustomer(customer) {
+    return this.http.delete<any>(`${this.customerUrl}/${customer.id}`, this.getAuthHeaders());
   }
 
   loadCalendars(): Observable<any[]> {

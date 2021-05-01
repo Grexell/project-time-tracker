@@ -3,6 +3,7 @@ import {MatDialog} from '@angular/material/dialog';
 import {CustomerDialogComponent} from '../customer-dialog/customer-dialog.component';
 import {ConfirmDialogComponent} from '../../common/confirm-dialog/confirm-dialog.component';
 import {ProjectDialogComponent} from '../project-dialog/project-dialog.component';
+import {ApiService} from "../../api.service";
 
 @Component({
   selector: 'app-project-tab',
@@ -44,7 +45,7 @@ export class ProjectTabComponent implements OnInit {
     }
   ];
 
-  constructor(public dialog: MatDialog) { }
+  constructor(private api: ApiService, public dialog: MatDialog) { }
 
   ngOnInit(): void {
     this.loadProjects();
@@ -55,13 +56,7 @@ export class ProjectTabComponent implements OnInit {
   }
 
   private loadProjects() {
-    this.customers = [
-      {id: 1, name: 'customer1'},
-      {id: 1, name: 'customer2'},
-      {id: 1, name: 'customer3'},
-      {id: 1, name: 'customer4'},
-      {id: 1, name: 'customer5'}
-    ];
+    this.api.loadCustomers().subscribe(customers => this.customers = customers);
   }
 
   openNewCustomerModal() {
@@ -75,7 +70,7 @@ export class ProjectTabComponent implements OnInit {
       disableClose: true
     }).beforeClosed().subscribe(result => {
       if (result) {
-        this.customers.push(result);
+        this.api.createCustomer(result).subscribe( customer => this.customers.push(customer));
       }
     });
   }
@@ -86,7 +81,7 @@ export class ProjectTabComponent implements OnInit {
       disableClose: true
     }).beforeClosed().subscribe(result => {
       if (result) {
-        Object.assign(customer, result);
+        this.api.updateCustomer(result).subscribe( response => Object.assign(customer, response));
       }
     });
   }
@@ -100,10 +95,12 @@ export class ProjectTabComponent implements OnInit {
       disableClose: true
     }).beforeClosed().subscribe(result => {
       if (result) {
-        this.customers.splice(this.customers.indexOf(customer), 1);
-        if (this.selectedCustomers.includes(customer)) {
-          this.selectedCustomers.splice(this.customers.indexOf(customer), 1);
-        }
+        this.api.deleteCustomer(customer).subscribe( () => {
+          this.customers.splice(this.customers.indexOf(customer), 1);
+          if (this.selectedCustomers.includes(customer)) {
+            this.selectedCustomers.splice(this.customers.indexOf(customer), 1);
+          }
+        });
       }
     });
   }

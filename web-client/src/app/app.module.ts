@@ -40,6 +40,7 @@ import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { VacationsTabComponent } from './manager/vacations-tab/vacations-tab.component';
 import {UsersTabComponent} from './manager/users-tab/users-tab.component';
 import {MatExpansionModule} from "@angular/material/expansion";
+import {MatCheckboxModule} from "@angular/material/checkbox";
 
 @NgModule({
   declarations: [
@@ -84,7 +85,8 @@ import {MatExpansionModule} from "@angular/material/expansion";
         MatDatepickerModule,
         MatNativeDateModule,
         MatButtonToggleModule,
-        MatExpansionModule
+        MatExpansionModule,
+        MatCheckboxModule
     ],
   providers: [],
   bootstrap: [AppComponent]

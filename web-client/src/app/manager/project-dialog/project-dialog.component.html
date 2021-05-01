@@ -59,10 +59,13 @@
                             <div mat-line>{{user.firstName}} {{user.secondName}}</div>
                             <div mat-line> {{user.position}}</div>
                         </div>
-                        <mat-form-field appearance="outline" floatLabel="always">
-                            <mat-label>Salary On Project</mat-label>
-                            <input matInput type="number" [(ngModel)]="user.budget" step="100">
-                        </mat-form-field>
+                        <div>
+                            <mat-checkbox class="mx-2" [(ngModel)]="user.hourly" color="accent">Monthly</mat-checkbox>
+                            <mat-form-field [style.width.px]="100" appearance="outline" floatLabel="always">
+                                <mat-label>Project Salary</mat-label>
+                                <input matInput type="number" [(ngModel)]="user.budget" step="100" min="0">
+                            </mat-form-field>
+                        </div>
                         <button mat-icon-button color="warn" (click)="removeUser(user); $event.stopPropagation()">
                             <mat-icon>delete</mat-icon>
                         </button>

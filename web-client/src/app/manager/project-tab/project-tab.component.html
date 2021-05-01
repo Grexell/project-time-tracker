@@ -13,7 +13,7 @@
                             <mat-icon>mode_edit</mat-icon>
                         </button>
                     </div>
-                    <button mat-icon-button color="warn" (click)="openRemoveCustomerModal(customer); $event.stopPropagation()">
+                    <button *ngIf="customer.id !== 1" mat-icon-button color="warn" (click)="openRemoveCustomerModal(customer); $event.stopPropagation()">
                         <mat-icon>delete</mat-icon>
                     </button>
                 </div>
