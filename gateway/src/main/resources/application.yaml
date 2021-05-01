@@ -17,6 +17,16 @@ spring:
           uri: lb://HOLIDAY-SERVER
           predicates:
             - Path=/calendar/**
+        - id: project
+          uri: lb://PROJECT-SERVER
+          predicates:
+            - Path=/project/**,/customer/**,/employee/**
+        - id: employee
+          uri: lb://EMPLOYEE-SERVER
+          predicates:
+            - Path=/user/**
+          filters:
+            - RewritePath=/user/(?<remaining>.*), /$\{remaining}
       default-filters:
         - DedupeResponseHeader=Access-Control-Allow-Credentials Access-Control-Allow-Origin, RETAIN_UNIQUE
       globalcors:
