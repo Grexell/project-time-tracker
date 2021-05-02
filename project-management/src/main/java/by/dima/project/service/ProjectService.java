@@ -7,6 +7,6 @@ import reactor.core.publisher.Mono;
 
 public interface ProjectService {
     Flux<ProjectDetails> getProjects(Long userId);
-    Mono<Project> createProject(Project project);
-    Mono<Void> attachProject(Long projectId, Long userId);
+    Mono<Project> createProject(Long userId, ProjectDetails project);
+    Mono<Void> attachProject(Long userId, Long projectId);
 }

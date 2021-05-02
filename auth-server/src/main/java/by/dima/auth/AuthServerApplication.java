@@ -17,15 +17,4 @@ public class AuthServerApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(AuthServerApplication.class, args);
 	}
-//	@Bean
-//	CorsWebFilter corsWebFilter() {
-//		CorsConfiguration corsConfig = new CorsConfiguration();
-//		corsConfig.setAllowedOrigins(Arrays.asList("*"));
-//
-//		UrlBasedCorsConfigurationSource source =
-//				new UrlBasedCorsConfigurationSource();
-//		source.registerCorsConfiguration("/**", corsConfig);
-//
-//		return new CorsWebFilter(source);
-//	}
 }

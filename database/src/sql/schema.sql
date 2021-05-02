@@ -130,15 +130,17 @@ CREATE TABLE logs(
     message   nvarchar(200)
 );
 
-# create view manager_projects as
-#     select * from project
-#         inner join user_project mp on project.id = mp.project_id
-#         inner join user m on mp.user_id = m.id and m.role_id = 2
-#     union
-#     select * from project where not exists(select * from user_project
-#         inner join user u on user_project.user_id = u.id
-#     where project_id = project.id and u.role_id = 2);
-#
+create view manager_projects as
+    select p.*, m.id as manager_id from project p
+        inner join user_project mp on p.id = mp.project_id
+        inner join user m on mp.user_id = m.id and m.role_id = 2
+    union
+    select p.*, m.id as manager_id from project p
+    cross join user m
+    where not exists(select * from user_project up
+        inner join user u on up.user_id = u.id
+    where project_id = p.id and u.role_id = 2) and m.role_id = 2;
+
 # create view manager_users as
 #     select * from project
 #         inner join user_project mp on project.id = mp.project_id
@@ -184,7 +186,7 @@ END;
 DELIMITER ;
 
 DELIMITER //
-
+# todo think about delayed salary and position change
 CREATE PROCEDURE increase_salary(manager_id bigint, user bigint, project bigint, salary_amount double, monthly bool)
 BEGIN
     IF (exists(select *
@@ -216,15 +218,27 @@ END //
 
 DELIMITER ;
 
-DELIMITER //
 
-CREATE PROCEDURE create_project(user_id bigint, project nvarchar(100), budget double, OUT project_id bigint)
+DROP PROCEDURE IF EXISTS attach_project;
+
+DELIMITER //
+CREATE PROCEDURE attach_project(user_id bigint, project_id bigint)
+BEGIN
+    INSERT INTO user_project(user_id, project_id)
+    SELECT `user`.id, project_id FROM user INNER JOIN role r on `user`.role_id = r.id WHERE r.name = 'manager';
+END //
+
+DELIMITER ;
+
+DROP PROCEDURE IF EXISTS create_project;
+
+DELIMITER //
+CREATE PROCEDURE create_project(user_id bigint, project nvarchar(100), start_date date, budget double, OUT project_id bigint)
 BEGIN
     INSERT INTO project(name, start_date, budget)
-     VALUES (user_id, project, budget);
+     VALUES (project, start_date, budget);
     SET project_id = LAST_INSERT_ID();
-    INSERT INTO user_project(user_id, project_id)
-    SELECT id, project_id FROM user INNER JOIN role r on `user`.role_id = r.id WHERE r.name = 'manager';
+    attach_project(user_id, project_id);
 END //
 
 DELIMITER ;
@@ -268,10 +282,6 @@ BEGIN
         end;
     end if;
 END //
-
-# calling procedures
-# @Query(value = "CALL FIND_CARS_AFTER_YEAR(:year_in);", nativeQuery = true)
-# List<Car> findCarsAfterYear(@Param("year_in") Integer year_in);
 
 DELIMITER ;
 
@@ -346,6 +356,7 @@ BEGIN
              inner join salary s on up.id = s.user_id
     where up.user_id = user
       and s.monthly);
+    return salary;
 END; //
 DELIMITER ;
 

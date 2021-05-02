@@ -14,8 +14,8 @@ public class ProjectDetails extends Project {
     @Transient
     private boolean attached;
     @Transient
-    private List<Employee> team;
+    private List<TeamMember> team;
     @Transient
-    private List<Customer> customers;
+    private List<ProjectCustomer> customers;
 //    todo add info about tasks for reporting
 }

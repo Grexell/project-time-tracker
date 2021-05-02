@@ -34,19 +34,19 @@ public class ProjectController {
     }
 
     @PostMapping
-    public ResponseEntity<Mono<Project>> createProject(@RequestBody Project project, @RequestHeader(AUTHORIZATION) String authHeader) {
+    public ResponseEntity<Mono<Project>> createProject(@RequestBody ProjectDetails project, @RequestHeader(AUTHORIZATION) String authHeader) {
         User user = TokenUtils.extractUser(authHeader);
-        if (is(user, MANAGER_ROLE)) {
-            return ResponseEntity.ok(projectService.createProject(project));
-        }
-        return ResponseEntity.badRequest().build();
+//        if (is(user, MANAGER_ROLE)) {
+            return ResponseEntity.ok(projectService.createProject(user.getId(), project));
+//        }
+//        return ResponseEntity.badRequest().build();
     }
 
     @PostMapping("{projectId}/attach")
     public ResponseEntity<Mono<Void>> attachProject(@PathVariable Long projectId, @RequestHeader(AUTHORIZATION) String authHeader) {
         User user = TokenUtils.extractUser(authHeader);
         if (is(user, MANAGER_ROLE)) {
-            return ResponseEntity.ok(projectService.attachProject(projectId, user.getId()));
+            return ResponseEntity.ok(projectService.attachProject(user.getId(), projectId));
         }
         return ResponseEntity.badRequest().build();
     }
