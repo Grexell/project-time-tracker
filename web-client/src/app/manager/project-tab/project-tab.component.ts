@@ -20,30 +20,7 @@ export class ProjectTabComponent implements OnInit {
   projectFilter: string;
   filteredProjects = [];
   selectedProjects = [];
-
-  users = [
-    {
-      id: 1,
-      firstName: 'user',
-      secondName: '1',
-      position: 'Junior Software Engineer',
-      salary: 800
-    },
-    {
-      id: 2,
-      firstName: 'user',
-      secondName: '2',
-      position: 'Senior Software Engineer',
-      salary: 2800
-    },
-    {
-      id: 3,
-      firstName: 'user',
-      secondName: '3',
-      position: 'Middle Software Engineer',
-      salary: 1500
-    }
-  ];
+  users = [];
 
   constructor(private api: ApiService, public dialog: MatDialog) { }
 
@@ -57,6 +34,11 @@ export class ProjectTabComponent implements OnInit {
 
   private loadProjects() {
     this.api.loadCustomers().subscribe(customers => this.customers = customers);
+    this.api.loadEmployees().subscribe(users => this.users = users);
+    this.api.loadProjects().subscribe(projects => {
+      this.projects = projects;
+      this.filterProjects();
+    });
   }
 
   openNewCustomerModal() {
@@ -119,15 +101,23 @@ export class ProjectTabComponent implements OnInit {
       width: '90%'
     }).beforeClosed().subscribe(result => {
       if (result) {
-        console.log(result);
-        this.projects.push(result);
+        result.customers = result.customers.map(customer => {
+          return {customerId: customer.id}
+        })
+        result.team = result.team.map(user => {
+          return {userId: user.id}
+        })
+        this.api.createProject(result).subscribe(project => {
+          this.projects.push(project);
+          this.filterProjects();
+        })
       }
     });
   }
 
   filterProjects() {
     this.filteredProjects = this.projects
-        .filter(project => project.name.includes(this.projectFilter))
+        .filter(project => !this.projectFilter || project.name.includes(this.projectFilter))
         .filter(project => this.selectedCustomers.every(customer => project.customers
             .map(cust => cust.id)
             .includes(customer.id)));
