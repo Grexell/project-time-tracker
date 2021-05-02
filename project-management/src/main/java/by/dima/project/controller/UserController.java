@@ -1,13 +1,20 @@
 package by.dima.project.controller;
 
 import by.dima.model.Bonus;
+import by.dima.model.Position;
 import by.dima.model.Salary;
+import by.dima.model.User;
 import by.dima.project.model.Employee;
 import by.dima.project.service.EmployeeService;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import by.dima.utils.TokenUtils;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+
+import static by.dima.utils.TokenUtils.MANAGER_ROLE;
+import static by.dima.utils.TokenUtils.is;
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
 @RestController
 @RequestMapping("/employee")
@@ -18,15 +25,47 @@ public class UserController {
         this.employeeService = employeeService;
     }
 
-    public Flux<Employee> getEmployees(Long managerId) {
-        return employeeService.getEmployees(managerId);
+    @GetMapping
+    public ResponseEntity<Flux<Employee>> getEmployees(@RequestHeader(AUTHORIZATION) String authHeader) {
+        User user = TokenUtils.extractUser(authHeader);
+        if (is(user, MANAGER_ROLE)) {
+            return ResponseEntity.ok(employeeService.getEmployees(user.getId()));
+        }
+        return ResponseEntity.badRequest().build();
     }
 
-    public Mono<Void> giveBonus(Long managerId, Bonus bonus) {
-        return employeeService.giveBonus(managerId, bonus);
+    @PostMapping("/bonus")
+    public ResponseEntity<Mono<Void>> giveBonus(@RequestBody Bonus bonus, @RequestHeader(AUTHORIZATION) String authHeader) {
+        User user = TokenUtils.extractUser(authHeader);
+        if (is(user, MANAGER_ROLE)) {
+            return ResponseEntity.ok(employeeService.giveBonus(user.getId(), bonus));
+        }
+        return ResponseEntity.badRequest().build();
     }
 
-    public Mono<Void> changeSalary(Long managerId, Salary salary) {
-        return employeeService.changeSalary(managerId, salary);
+    @PostMapping("/salary")
+    public ResponseEntity<Mono<Void>> changeSalary(@RequestBody Salary salary, @RequestHeader(AUTHORIZATION) String authHeader) {
+        User user = TokenUtils.extractUser(authHeader);
+        if (is(user, MANAGER_ROLE)) {
+            return ResponseEntity.ok(employeeService.changeSalary(user.getId(), salary));
+        }
+        return ResponseEntity.badRequest().build();
+    }
+
+    @GetMapping("/position")
+    public ResponseEntity<Flux<Position>> getPositions(@RequestHeader(AUTHORIZATION) String authHeader) {
+        if (is(authHeader, MANAGER_ROLE)) {
+            return ResponseEntity.ok(employeeService.getPositions());
+        }
+        return ResponseEntity.badRequest().build();
+    }
+
+    @PostMapping("/position")
+    public ResponseEntity<Mono<Void>> changePosition(@RequestBody Salary salary, @RequestHeader(AUTHORIZATION) String authHeader) {
+        User user = TokenUtils.extractUser(authHeader);
+        if (is(user, MANAGER_ROLE)) {
+            return ResponseEntity.ok(employeeService.changePosition(user.getId(), salary));
+        }
+        return ResponseEntity.badRequest().build();
     }
 }
