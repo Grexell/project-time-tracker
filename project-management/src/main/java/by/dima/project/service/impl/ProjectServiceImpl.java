@@ -5,6 +5,7 @@ import by.dima.project.dao.ProjectCustomerDao;
 import by.dima.project.dao.ProjectDao;
 import by.dima.project.dao.SalaryDao;
 import by.dima.project.dao.TeamDao;
+import by.dima.project.dto.ProjectDetailsDto;
 import by.dima.project.model.ProjectCustomer;
 import by.dima.project.model.ProjectDetails;
 import by.dima.project.model.TeamMember;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -30,8 +32,8 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public Flux<ProjectDetails> getProjects(Long userId) {
-        return null;
+    public Flux<ProjectDetailsDto> getProjects(Long userId) {
+        return projectDao.findAll(userId);
     }
 
     @Override
@@ -54,7 +56,13 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     public Mono<Void> attachProject(Long userId, Long projectId) {
-//        todo find mot managed project before attach
+//        todo find not managed project before attach
         return projectDao.attach(userId, projectId);
+    }
+
+    @Override
+    public Mono<Void> finishProject(Long userId, Long projectId, LocalDate finishDate) {
+//        todo add finishing on specified date
+        return projectDao.finish(userId, projectId);
     }
 }

@@ -135,11 +135,10 @@ create view manager_projects as
         inner join user_project mp on p.id = mp.project_id
         inner join user m on mp.user_id = m.id and m.role_id = 2
     union
-    select p.*, m.id as manager_id from project p
-    cross join user m
+    select p.*, null as manager_id from project p
     where not exists(select * from user_project up
         inner join user u on up.user_id = u.id
-    where project_id = p.id and u.role_id = 2) and m.role_id = 2;
+    where project_id = p.id and u.role_id = 2);
 
 # create view manager_users as
 #     select * from project

@@ -2,14 +2,16 @@ package by.dima.project.controller;
 
 import by.dima.model.Project;
 import by.dima.model.User;
+import by.dima.project.dto.ProjectDetailsDto;
 import by.dima.project.model.ProjectDetails;
 import by.dima.project.service.ProjectService;
 import by.dima.utils.TokenUtils;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+
+import java.time.LocalDate;
 
 import static by.dima.utils.TokenUtils.MANAGER_ROLE;
 import static by.dima.utils.TokenUtils.is;
@@ -25,7 +27,7 @@ public class ProjectController {
     }
 
     @GetMapping
-    public ResponseEntity<Flux<ProjectDetails>> getProjects(@RequestHeader(AUTHORIZATION) String authHeader) {
+    public ResponseEntity<Flux<ProjectDetailsDto>> getProjects(@RequestHeader(AUTHORIZATION) String authHeader) {
         User user = TokenUtils.extractUser(authHeader);
         if (is(user, MANAGER_ROLE)) {
             return ResponseEntity.ok(projectService.getProjects(user.getId()));
@@ -36,10 +38,10 @@ public class ProjectController {
     @PostMapping
     public ResponseEntity<Mono<Project>> createProject(@RequestBody ProjectDetails project, @RequestHeader(AUTHORIZATION) String authHeader) {
         User user = TokenUtils.extractUser(authHeader);
-//        if (is(user, MANAGER_ROLE)) {
+        if (is(user, MANAGER_ROLE)) {
             return ResponseEntity.ok(projectService.createProject(user.getId(), project));
-//        }
-//        return ResponseEntity.badRequest().build();
+        }
+        return ResponseEntity.badRequest().build();
     }
 
     @PostMapping("{projectId}/attach")
@@ -47,6 +49,15 @@ public class ProjectController {
         User user = TokenUtils.extractUser(authHeader);
         if (is(user, MANAGER_ROLE)) {
             return ResponseEntity.ok(projectService.attachProject(user.getId(), projectId));
+        }
+        return ResponseEntity.badRequest().build();
+    }
+
+    @PostMapping("{projectId}/finish")
+    public ResponseEntity<Mono<Void>> finishProject(@PathVariable Long projectId, @RequestParam LocalDate finishDate, @RequestHeader(AUTHORIZATION) String authHeader) {
+        User user = TokenUtils.extractUser(authHeader);
+        if (is(user, MANAGER_ROLE)) {
+            return ResponseEntity.ok(projectService.finishProject(user.getId(), projectId, finishDate));
         }
         return ResponseEntity.badRequest().build();
     }
