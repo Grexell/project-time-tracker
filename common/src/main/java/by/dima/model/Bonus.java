@@ -7,5 +7,5 @@ import org.springframework.data.annotation.Id;
 public class Bonus {
     @Id
     private Long id;
-//    private
+    private double amount;
 }

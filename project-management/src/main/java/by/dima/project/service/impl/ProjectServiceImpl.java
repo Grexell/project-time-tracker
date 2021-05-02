@@ -33,13 +33,22 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     public Flux<ProjectDetailsDto> getProjects(Long userId) {
-        return projectDao.findAll(userId);
+        return projectDao.findAll(userId).flatMap(project -> Mono.zip(teamDao.findAllByProjectId(project.getId())
+                            .collectList()
+                            .doOnNext(project::setTeam)
+                            .then(),
+                    customerDao.findAllByProjectId(project.getId())
+                            .collectList()
+                            .doOnNext(System.out::println)
+                            .doOnNext(project::setCustomers)
+                            .then()).thenReturn(project));
     }
 
     @Override
     public Mono<Project> createProject(Long userId, ProjectDetails project) {
         return projectDao.create(userId, project).flatMap(projectId -> {
             project.setId(projectId);
+            project.setAttached(true);
 
             List<TeamMember> team = project.getTeam();
             team.forEach(member -> member.setProjectId(projectId));

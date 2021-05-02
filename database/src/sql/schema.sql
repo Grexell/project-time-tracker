@@ -140,17 +140,25 @@ create view manager_projects as
         inner join user u on up.user_id = u.id
     where project_id = p.id and u.role_id = 2);
 
-# create view manager_users as
-#     select * from project
-#         inner join user_project mp on project.id = mp.project_id
-#         inner join user m on mp.user_id = m.id and m.role_id = 2
-#         inner join user_project up on project.id = up.project_id
-#         inner join user u on up.user_id = u.id and u.role_id != 2
-#         inner join salary s on up.id = s.user_id
-#         inner join bonus b on up.id = b.user_id;
+drop view if EXISTS manager_users;
+create view manager_users as
+select u.id, email, first_name, second_name, role_id, calendar_id, mp.manager_id
+from manager_projects mp
+         inner join user_project up on mp.id = up.project_id and up.user_id != mp.manager_id
+         inner join user u on up.user_id = u.id;
+#          inner join user_position p on u.id = p.user_id
+#          inner join position p2 on p.position_id = p2.id;
 #
 # create view project_vacations as
 #     select * from vacation where ;
+
+drop view if EXISTS current_salary;
+create view current_salary as
+    select * from salary order by change_date desc;
+
+drop view if EXISTS current_position;
+create view current_position as
+    select up.user_id, p.name from user_position up inner join position p on up.position_id = p.id order by change_date desc;
 
 insert into role(name) values ('admin'), ('manager'), ('user');
 insert into calendar(locale) values ('be_BY');
@@ -207,12 +215,12 @@ DELIMITER ;
 
 DELIMITER //
 
-CREATE PROCEDURE change_position(user_id bigint, position_id bigint)
+CREATE PROCEDURE change_position(manager_id bigint, user_id bigint, position_id bigint)
 BEGIN
     INSERT INTO user_position(user_id, position_id, change_date)
      VALUES (user_id, position_id, CURDATE());
-    INSERT INTO logs(`table`, operation, `row`, message)
-    values ('user_position', 'change_user_position', LAST_INSERT_ID(), 'change user position');
+    INSERT INTO logs(`table`, operation, `row`, message, user_id)
+    values ('user_position', 'change_user_position', LAST_INSERT_ID(), 'change user position', manager_id);
 END //
 
 DELIMITER ;
@@ -237,7 +245,7 @@ BEGIN
     INSERT INTO project(name, start_date, budget)
      VALUES (project, start_date, budget);
     SET project_id = LAST_INSERT_ID();
-    attach_project(user_id, project_id);
+    call attach_project(user_id, project_id);
 END //
 
 DELIMITER ;
@@ -317,21 +325,20 @@ BEGIN
     DECLARE salary double;
     DECLARE project_count int;
     DECLARE hours_per_project double;
-    set salary = (select sum(s.amount)
---     todo add check for finished poject
+    set salary = (select sum(cs.amount)
+--     todo add select of actual salary by date
     from user_project up
              inner join project p on p.id = up.project_id
-             inner join salary s on up.id = s.user_id
+        inner join (select * from current_salary s where s.change_date <= date and s.user_id = user limit 1) cs on up.user_id = cs.user_id
     where up.user_id = user
-      and s.monthly);
+      and cs.monthly and p.start_date >= date and (p.end_date is null or p.end_date <= date));
     set project_count = (select distinct count(*) from user_project where user_id = user);
     set hours_per_project = (select get_working_days(date, u.calendar_id) * 8 / project_count from user u where user_id = user);
-    set salary = salary + (select s.amount * hours_per_project
+    set salary = salary + (select cs.amount * hours_per_project
     from user_project up
              inner join project p on p.id = up.project_id
---         add selecting last salary
-             inner join salary s on up.id = s.user_id
-    where up.user_id = user and not s.monthly);
+             inner join (select * from current_salary s where s.change_date <= date and s.user_id = user limit 1) cs on up.user_id = cs.user_id
+    where up.user_id = user and not cs.monthly and  p.start_date >= date and (p.end_date is null or p.end_date <= date));
     return salary;
 END; //
 DELIMITER ;
@@ -356,6 +363,14 @@ BEGIN
     where up.user_id = user
       and s.monthly);
     return salary;
+END; //
+DELIMITER ;
+
+
+drop function if exists get_position;
+CREATE FUNCTION get_position(date date, user bigint) RETURNS nvarchar(100)
+BEGIN
+    return (select p.name from user_position up join position p on p.id = up.position_id where up.user_id = user and up.change_date < date limit 1);
 END; //
 DELIMITER ;
 

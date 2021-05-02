@@ -7,4 +7,5 @@ import org.springframework.data.annotation.Id;
 public class Position {
     @Id
     private Long id;
+    private String name;
 }

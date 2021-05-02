@@ -9,8 +9,8 @@ import reactor.core.publisher.Mono;
 
 public interface EmployeeService {
     Flux<Employee> getEmployees(Long managerId);
-    Mono<Void> giveBonus(Long managerId, Bonus bonus);
-    Mono<Void> changeSalary(Long managerId, Salary salary);
+    Mono<Void> giveBonus(Long managerId, Long userId, long projectId, Bonus bonus);
+    Mono<Void> changeSalary(Long managerId, long userId, long projectId, Salary salary);
     Flux<Position> getPositions();
-    Mono<Void> changePosition(Long managerId, Salary salary);
+    Mono<Void> changePosition(Long managerId, Long userId, Position position);
 }

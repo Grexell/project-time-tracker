@@ -34,20 +34,20 @@ public class UserController {
         return ResponseEntity.badRequest().build();
     }
 
-    @PostMapping("/bonus")
-    public ResponseEntity<Mono<Void>> giveBonus(@RequestBody Bonus bonus, @RequestHeader(AUTHORIZATION) String authHeader) {
+    @PostMapping("/{projectId}/{userId}/bonus")
+    public ResponseEntity<Mono<Void>> giveBonus(@PathVariable long projectId, @PathVariable Long userId, @RequestBody Bonus bonus, @RequestHeader(AUTHORIZATION) String authHeader) {
         User user = TokenUtils.extractUser(authHeader);
         if (is(user, MANAGER_ROLE)) {
-            return ResponseEntity.ok(employeeService.giveBonus(user.getId(), bonus));
+            return ResponseEntity.ok(employeeService.giveBonus(user.getId(), userId, projectId, bonus));
         }
         return ResponseEntity.badRequest().build();
     }
 
-    @PostMapping("/salary")
-    public ResponseEntity<Mono<Void>> changeSalary(@RequestBody Salary salary, @RequestHeader(AUTHORIZATION) String authHeader) {
+    @PostMapping("/{projectId}/{userId}/salary")
+    public ResponseEntity<Mono<Void>> changeSalary(@PathVariable long projectId, @PathVariable long userId, @RequestBody Salary salary, @RequestHeader(AUTHORIZATION) String authHeader) {
         User user = TokenUtils.extractUser(authHeader);
         if (is(user, MANAGER_ROLE)) {
-            return ResponseEntity.ok(employeeService.changeSalary(user.getId(), salary));
+            return ResponseEntity.ok(employeeService.changeSalary(user.getId(), userId, projectId, salary));
         }
         return ResponseEntity.badRequest().build();
     }
@@ -60,11 +60,11 @@ public class UserController {
         return ResponseEntity.badRequest().build();
     }
 
-    @PostMapping("/position")
-    public ResponseEntity<Mono<Void>> changePosition(@RequestBody Salary salary, @RequestHeader(AUTHORIZATION) String authHeader) {
+    @PostMapping("/{userId}/position")
+    public ResponseEntity<Mono<Void>> changePosition(@PathVariable long userId, @RequestBody Position position, @RequestHeader(AUTHORIZATION) String authHeader) {
         User user = TokenUtils.extractUser(authHeader);
         if (is(user, MANAGER_ROLE)) {
-            return ResponseEntity.ok(employeeService.changePosition(user.getId(), salary));
+            return ResponseEntity.ok(employeeService.changePosition(user.getId(), userId, position));
         }
         return ResponseEntity.badRequest().build();
     }
