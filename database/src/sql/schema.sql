@@ -163,17 +163,6 @@ drop view if EXISTS current_position;
 create view current_position as
     select up.user_id, p.name from user_position up inner join position p on up.position_id = p.id order by change_date desc;
 
-insert into role(name) values ('admin'), ('manager'), ('user');
-insert into calendar(locale) values ('be_BY');
-
-insert into user(first_name, second_name, email, password, role_id, calendar_id)
-values ('admin', 'admin', 'admin@company.com', '$2a$10$EFEJzuZA3DLrNeB8bIWv9eviqKs05bBkKe3ZQfBn8itQukd5jDFH2', 1, 1);-- password = admin
-
-insert into customer(name, contact)
-values ('Internal', 'ceo@company.com');-- password = admin
-# insert INTO user_role (user_id, role_id)
-# values ((select id from "user" where email = 'admin@dima'), (select id from role where name = 'admin'));
-
 DELIMITER //
 
 CREATE PROCEDURE add_bonus(manager_id bigint, user bigint, project bigint, bonus double)
