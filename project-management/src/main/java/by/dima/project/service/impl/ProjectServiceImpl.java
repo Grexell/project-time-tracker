@@ -58,7 +58,7 @@ public class ProjectServiceImpl implements ProjectService {
 
             return Mono.zip(teamDao.saveAll(team)
                     .flatMap(member -> salaryDao.increaseSalary(userId, member.getUserId(), member.getProjectId(), member.getSalary(), member.isMonthly()))
-                    .then(), customerDao.saveAll(customers).then())
+                    .then(), customerDao.saveAll(customers))
                     .thenReturn(project);
         });
     }
