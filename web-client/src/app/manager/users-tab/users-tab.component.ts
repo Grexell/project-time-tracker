@@ -5,6 +5,7 @@ import {MatDialog} from "@angular/material/dialog";
 import {FormControl} from "@angular/forms";
 import {map, startWith} from "rxjs/operators";
 import {Observable} from "rxjs";
+import {BonusModalComponent} from "../bonus-modal/bonus-modal.component";
 
 @Component({
   selector: 'app-users-tab',
@@ -20,7 +21,7 @@ import {Observable} from "rxjs";
 })
 export class UsersTabComponent implements OnInit {
 
-  userTableColumns = ['name', 'email', 'position', 'salary'];
+  userTableColumns = ['name', 'email', 'position', 'salary', 'actions'];
   userFilter = '';
   selectedUsers = [];
   users = [];
@@ -70,6 +71,22 @@ export class UsersTabComponent implements OnInit {
       result = typeof result === 'string' ? { name : result } : result;
       if (result && user.position !== result.id) {
         this.api.changePositions(user.id, result).subscribe(() => this.loadUsers());
+      }
+    });
+  }
+
+  openBonusModal(user) {
+    this.dialog.open(BonusModalComponent, {
+      data: {
+        projects: [],
+        position: user.position
+      },
+      disableClose: true
+    }).beforeClosed().subscribe(result => {
+      if (result) {
+        this.api.giveBonus(user.id, result).subscribe(() => {
+          // todo reload user details
+        });
       }
     });
   }

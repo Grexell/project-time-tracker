@@ -42,6 +42,7 @@ import {UsersTabComponent} from './manager/users-tab/users-tab.component';
 import {MatExpansionModule} from "@angular/material/expansion";
 import {MatCheckboxModule} from "@angular/material/checkbox";
 import {MatAutocompleteModule} from "@angular/material/autocomplete";
+import { BonusModalComponent } from './manager/bonus-modal/bonus-modal.component';
 
 @NgModule({
   declarations: [
@@ -61,7 +62,8 @@ import {MatAutocompleteModule} from "@angular/material/autocomplete";
       VacationsComponent,
       ReportComponent,
       VacationsTabComponent,
-      UsersTabComponent
+      UsersTabComponent,
+      BonusModalComponent
   ],
     imports: [
         BrowserModule,

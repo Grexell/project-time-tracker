@@ -112,6 +112,10 @@ export class ApiService {
     return this.http.post<any>(`${this.employeeUrl}/${userId}/position`, position, this.getAuthHeaders());
   }
 
+  giveBonus(userId, bonus): Observable<any> {
+    return this.http.post<any>(`${this.employeeUrl}/${bonus.project.id}/${userId}/bonus`, bonus, this.getAuthHeaders());
+  }
+
   loadEmployees(): Observable<any[]> {
     return this.http.get<any[]>(this.employeeUrl, this.getAuthHeaders());
   }

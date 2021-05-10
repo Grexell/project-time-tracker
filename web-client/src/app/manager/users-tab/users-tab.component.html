@@ -26,12 +26,12 @@
             <th mat-header-cell *matHeaderCellDef>Salary</th>
             <td mat-cell *matCellDef="let element">
                 {{element.salary | currency}}
-                <mat-chip class="mx-3 pointer" selected color="accent">Change</mat-chip>
             </td>
         </ng-container>
         <ng-container matColumnDef="actions">
             <th mat-header-cell *matHeaderCellDef>Actions</th>
             <td mat-cell *matCellDef="let element">
+                <mat-chip class="mx-3 pointer" selected color="accent" (click)="openBonusModal(element)">Give Bonus</mat-chip>
             </td>
         </ng-container>
 
