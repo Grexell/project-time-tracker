@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import {ApiService} from "../../api.service";
 
 @Component({
   selector: 'app-vacations',
@@ -11,9 +12,15 @@ export class VacationsComponent implements OnInit {
   vacations: any[];
   teamVacations: any[];
 
-  constructor() { }
+  constructor(private api: ApiService) { }
 
   ngOnInit(): void {
+    this.loadVacations();
+  }
+
+  private loadVacations() {
+    this.api.loadVacations().subscribe(vacations => this.vacations = vacations);
+    this.api.loadTeamVacations().subscribe(vacations => this.teamVacations = vacations);
   }
 
 }

@@ -35,7 +35,7 @@ export class ProjectTabComponent implements OnInit {
   private loadProjects() {
     this.api.loadCustomers().subscribe(customers => this.customers = customers);
     this.api.loadEmployees().subscribe(users => this.users = users);
-    this.api.loadProjects().subscribe(projects => {
+    this.api.loadManagedProjects().subscribe(projects => {
       this.projects = projects;
       this.filterProjects();
     });

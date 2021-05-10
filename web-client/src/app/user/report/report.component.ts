@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import {ApiService} from "../../api.service";
 
 class Report {
   public id: number;
@@ -20,10 +21,21 @@ export class ReportComponent implements OnInit {
   tasks = [];
 
   reports = [];
+  filteredReports = [];
 
-  constructor() { }
+  constructor(private api: ApiService) { }
 
   ngOnInit(): void {
+    this.loadReports();
   }
 
+  private loadReports() {
+    this.api.loadReports().subscribe(reports => this.reports = reports);
+  }
+
+  private filterReports() {
+      // todo add filtering
+    this.filteredReports = this.reports;
+    // this.filteredReports = this.reports.filter();
+  }
 }

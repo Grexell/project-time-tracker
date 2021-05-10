@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import {ApiService} from "../../api.service";
 
 @Component({
   selector: 'app-projects',
@@ -7,12 +8,24 @@ import { Component, OnInit } from '@angular/core';
 })
 export class ProjectsComponent implements OnInit {
   projects = [];
+  selectedProject: any;
+  tasks: any[];
   projectFilter: string;
   filteredProjects = [];
 
-  constructor() { }
+  constructor(private api: ApiService) { }
 
   ngOnInit(): void {
+    this.loadProjects();
+  }
+
+  private loadProjects() {
+    this.api.loadProjects().subscribe(projects => this.projects = projects);
+  }
+
+  loadTasks() {
+    this.tasks = [];
+    this.api.loadTasks(this.selectedProject.id).subscribe(tasks => this.tasks = tasks);
   }
 
   filterProjects() {

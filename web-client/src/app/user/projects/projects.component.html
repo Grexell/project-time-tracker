@@ -8,15 +8,15 @@
             <input  matInput type="text" [ngModel]="projectFilter" (ngModelChange)="projectFilter = $event; filterProjects()">
         </mat-form-field>
         <mat-accordion displayMode="flat" multi="true" *ngFor="let project of filteredProjects">
-            <mat-expansion-panel hideToggle>
+            <mat-expansion-panel hideToggle (opened)="selectedProject = project; loadTasks()" (closed)="selectedProject = null">
                 <mat-expansion-panel-header>
                     <mat-panel-title>
                         {{project.name}}
                     </mat-panel-title>
-                    <mat-panel-description>
-                        Type your name and age
-                        <mat-icon>account_circle</mat-icon>
-                    </mat-panel-description>
+<!--                    <mat-panel-description>-->
+<!--                        Type your name and age-->
+<!--                        <mat-icon>account_circle</mat-icon>-->
+<!--                    </mat-panel-description>-->
                 </mat-expansion-panel-header>
 
                 <!--                    <mat-form-field>-->
@@ -24,7 +24,7 @@
                 <!--                        <input matInput>-->
                 <!--                    </mat-form-field>-->
                 <mat-action-row>
-                    <!--            <button mat-button color="primary" (click)="nextStep()">Next</button>-->
+                    <button mat-button color="primary">Add Task</button>
                 </mat-action-row>
             </mat-expansion-panel>
         </mat-accordion>

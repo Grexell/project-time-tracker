@@ -14,8 +14,11 @@ export class ApiService {
   private calendarUrl = this.host + 'calendar';
   private databaseUrl = this.host + 'database';
   private customerUrl = this.host + 'customer';
-  private projectUrl = this.host + 'project';
+  private managedProjectUrl = this.host + 'project';
   private employeeUrl = this.host + 'employee';
+  private projectUrl = this.host + 'user/project';
+  private vacationUrl = this.host + 'user/vacation';
+  private reportUrl = this.host + 'user/report';
   private spinnerRef: OverlayRef = this.cdkSpinnerCreate();
   private _token: string;
 
@@ -31,6 +34,58 @@ export class ApiService {
 
   login(tokenRequest) {
     return this.http.post(this.authUrl + 'token', tokenRequest);
+  }
+
+  loadProjects(): Observable<any[]> {
+    return this.http.get<any[]>(this.projectUrl, this.getAuthHeaders());
+  }
+
+  loadTasks(projectId): Observable<any[]> {
+    return this.http.get<any[]>(`${this.projectUrl}/${projectId}/task`, this.getAuthHeaders());
+  }
+
+  createTask(projectId, task): Observable<any> {
+    return this.http.post<any[]>(`${this.projectUrl}/${projectId}/task`, task, this.getAuthHeaders());
+  }
+
+  updateTask(projectId, task): Observable<any> {
+    return this.http.put<any[]>(`${this.projectUrl}/${projectId}/task`, task, this.getAuthHeaders());
+  }
+
+  loadReports(): Observable<any[]> {
+    return this.http.get<any[]>(this.reportUrl, this.getAuthHeaders());
+  }
+
+  createReport(report): Observable<any[]> {
+    return this.http.post<any[]>(this.reportUrl, report, this.getAuthHeaders());
+  }
+
+  updateReport(report): Observable<any[]> {
+    return this.http.put<any[]>(this.reportUrl, report, this.getAuthHeaders());
+  }
+
+  loadVacations(): Observable<any[]> {
+    return this.http.get<any[]>(this.vacationUrl, this.getAuthHeaders());
+  }
+
+  requestVacation(vacation): Observable<any> {
+    return this.http.post<any[]>(this.vacationUrl, vacation, this.getAuthHeaders());
+  }
+
+  loadTeamVacations(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.vacationUrl}/team`, this.getAuthHeaders());
+  }
+
+  loadManagedVacations(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.vacationUrl}/managed`, this.getAuthHeaders());
+  }
+
+  acceptVacation(vacationId): Observable<any> {
+    return this.http.post<any[]>(`${this.vacationUrl}/${vacationId}/accept`, this.getAuthHeaders());
+  }
+
+  rejectVacation(vacationId): Observable<any> {
+    return this.http.post<any[]>(`${this.vacationUrl}/${vacationId}/reject`, this.getAuthHeaders());
   }
 
   loadCustomers(): Observable<any[]> {
@@ -53,12 +108,12 @@ export class ApiService {
     return this.http.get<any[]>(this.employeeUrl, this.getAuthHeaders());
   }
 
-  loadProjects(): Observable<any[]> {
-    return this.http.get<any[]>(this.projectUrl, this.getAuthHeaders());
+  loadManagedProjects(): Observable<any[]> {
+    return this.http.get<any[]>(this.managedProjectUrl, this.getAuthHeaders());
   }
 
   createProject(project): Observable<any[]> {
-    return this.http.post<any[]>(this.projectUrl, project, this.getAuthHeaders());
+    return this.http.post<any[]>(this.managedProjectUrl, project, this.getAuthHeaders());
   }
 
   loadCalendars(): Observable<any[]> {
