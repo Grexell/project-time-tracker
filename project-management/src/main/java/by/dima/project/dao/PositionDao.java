@@ -6,6 +6,6 @@ import org.springframework.data.repository.reactive.ReactiveCrudRepository;
 import reactor.core.publisher.Mono;
 
 public interface PositionDao extends ReactiveCrudRepository<Position, Long> {
-    @Query("CALL change_position(:#{#manager_id} , :#{#user_id}, :#{#position.id})")
+    @Query("CALL change_position(:#{#managerId} , :#{#userId}, :#{#position.id})")
     Mono<Void> changePosition(Long managerId, Long userId, Position position);
 }

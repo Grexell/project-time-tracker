@@ -205,12 +205,13 @@ END //
 
 DELIMITER ;
 
+DROP PROCEDURE IF EXISTS change_position;
 DELIMITER //
 
-CREATE PROCEDURE change_position(manager_id bigint, user_id bigint, position_id bigint)
+CREATE PROCEDURE change_position(manager_id bigint, user bigint, position bigint)
 BEGIN
     INSERT INTO user_position(user_id, position_id, change_date)
-     VALUES (user_id, position_id, CURDATE());
+     VALUES (user, position, CURDATE());
     INSERT INTO logs(`table`, operation, `row`, message, user_id)
     values ('user_position', 'change_user_position', LAST_INSERT_ID(), 'change user position', manager_id);
 END //
@@ -373,9 +374,9 @@ DELIMITER ;
 
 
 drop function if exists get_position;
-CREATE FUNCTION get_position(date date, user bigint) RETURNS nvarchar(100)
+CREATE FUNCTION get_position(date date, user bigint) RETURNS bigint
 BEGIN
-    return (select p.name from user_position up join position p on p.id = up.position_id where up.user_id = user and up.change_date < date limit 1);
+    return (select p.id from user_position up join position p on p.id = up.position_id where up.user_id = user and up.change_date <= date limit 1);
 END; //
 DELIMITER ;
 

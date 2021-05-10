@@ -10,7 +10,7 @@ import {MatInputModule} from '@angular/material/input';
 import {MatButtonModule} from '@angular/material/button';
 import {MatIconModule} from '@angular/material/icon';
 import {MatFormFieldModule} from '@angular/material/form-field';
-import { FormsModule } from '@angular/forms';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import { EmployeeComponent } from './employee/employee.component';
 import {MatToolbarModule} from '@angular/material/toolbar';
 import {MatTabsModule} from '@angular/material/tabs';
@@ -41,6 +41,7 @@ import { VacationsTabComponent } from './manager/vacations-tab/vacations-tab.com
 import {UsersTabComponent} from './manager/users-tab/users-tab.component';
 import {MatExpansionModule} from "@angular/material/expansion";
 import {MatCheckboxModule} from "@angular/material/checkbox";
+import {MatAutocompleteModule} from "@angular/material/autocomplete";
 
 @NgModule({
   declarations: [
@@ -86,7 +87,9 @@ import {MatCheckboxModule} from "@angular/material/checkbox";
         MatNativeDateModule,
         MatButtonToggleModule,
         MatExpansionModule,
-        MatCheckboxModule
+        MatCheckboxModule,
+        MatAutocompleteModule,
+        ReactiveFormsModule
     ],
   providers: [],
   bootstrap: [AppComponent]

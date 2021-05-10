@@ -104,6 +104,14 @@ export class ApiService {
     return this.http.delete<any>(`${this.customerUrl}/${customer.id}`, this.getAuthHeaders());
   }
 
+  loadPositions(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.employeeUrl}/position`, this.getAuthHeaders());
+  }
+
+  changePositions(userId, position): Observable<any> {
+    return this.http.post<any>(`${this.employeeUrl}/${userId}/position`, position, this.getAuthHeaders());
+  }
+
   loadEmployees(): Observable<any[]> {
     return this.http.get<any[]>(this.employeeUrl, this.getAuthHeaders());
   }

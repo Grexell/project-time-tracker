@@ -7,6 +7,6 @@ import lombok.EqualsAndHashCode;
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class Employee extends User {
-    private String position;
+    private Long position;
     private Double salary;
 }
