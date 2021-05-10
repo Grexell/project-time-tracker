@@ -315,9 +315,10 @@ drop function if exists get_project_salary;
 
 DELIMITER //
 
-CREATE FUNCTION get_project_salary(date date, user bigint) RETURNS double
+CREATE FUNCTION get_project_salary(date date, user_project bigint, monthly boolean) RETURNS double
 BEGIN
-    return (select s.amount from salary s where s.change_date <= date and s.user_id = user order by s.change_date desc limit 1);
+    return (select ls.amount from (select * from current_salary s where s.change_date <= date and s.user_id = user_project limit 1)
+    as ls  where ls.monthly = monthly);
 END; //
 DELIMITER ;
 
@@ -330,20 +331,18 @@ BEGIN
     DECLARE salary double;
     DECLARE project_count int;
     DECLARE hours_per_project double;
-    set salary = (select sum(cs.amount)
+    set salary = (select sum(IFNULL(get_project_salary(date, up.id, true), 0))
     from user_project up
-             inner join project p on p.id = up.project_id
-        inner join (select * from current_salary s where s.change_date <= date and s.user_id = user limit 1) cs on up.user_id = cs.user_id
+        inner join project p on p.id = up.project_id
     where up.user_id = user
-      and cs.monthly and p.start_date >= date and (p.end_date is null or p.end_date <= date));
+      and p.start_date >= date and (p.end_date is null or p.end_date <= date));
     set project_count = (select distinct count(*) from user_project up where up.user_id = user);
     if (project_count > 0) then
         set hours_per_project = (select get_working_days(date, u.calendar_id) * 8 / project_count from user u where u.id = user);
-        set salary = salary + (select cs.amount * hours_per_project
+        set salary = salary + (select sum(IFNULL(get_project_salary(date, up.id, false) * hours_per_project, 0))
                                from user_project up
                                         inner join project p on p.id = up.project_id
-                                        inner join (select * from current_salary s where s.change_date <= date and s.user_id = user limit 1) cs on up.user_id = cs.user_id
-                               where up.user_id = user and not cs.monthly and  p.start_date >= date and (p.end_date is null or p.end_date <= date));
+                               where up.user_id = user and  p.start_date >= date and (p.end_date is null or p.end_date <= date));
     end if;
     return salary;
 END; //

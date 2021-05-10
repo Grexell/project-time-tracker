@@ -21,11 +21,14 @@ export class UsersTabComponent implements OnInit {
   }
 
   loadUsers() {
-
+    this.api.loadEmployees().subscribe(users => {
+      this.users = users;
+      this.filterUsers();
+    });
   }
 
   filterUsers() {
-    this.filteredUsers = this.users.filter(user => user.email.toLowerCase().includes(this.userFilter.toLowerCase()) ||
+    this.filteredUsers = this.users.filter(user => !this.userFilter || user.email.toLowerCase().includes(this.userFilter.toLowerCase()) ||
         (user.firstName + user.secondName).toLowerCase().includes(this.userFilter.toLowerCase()));
   }
 }

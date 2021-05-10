@@ -60,7 +60,7 @@
                             <div mat-line> {{user.position}}</div>
                         </div>
                         <div>
-                            <mat-checkbox class="mx-2" [(ngModel)]="user.hourly" color="accent">Monthly</mat-checkbox>
+                            <mat-checkbox class="mx-2" [(ngModel)]="user.monthly" color="accent">Monthly</mat-checkbox>
                             <mat-form-field [style.width.px]="100" appearance="outline" floatLabel="always">
                                 <mat-label>Project Salary</mat-label>
                                 <input matInput type="number" [(ngModel)]="user.budget" step="100" min="0">

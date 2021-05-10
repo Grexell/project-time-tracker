@@ -105,7 +105,7 @@ export class ProjectTabComponent implements OnInit {
           return {customerId: customer.id}
         })
         result.team = result.team.map(user => {
-          return {userId: user.id}
+          return {userId: user.id, salary: user.budget, monthly: user.monthly}
         })
         this.api.createProject(result).subscribe(project => {
           this.projects.push(project);
