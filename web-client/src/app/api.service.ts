@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import {HttpClient} from '@angular/common/http';
+import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {Overlay, OverlayRef} from '@angular/cdk/overlay';
 import {ComponentPortal} from '@angular/cdk/portal';
 import {MatSpinner} from '@angular/material/progress-spinner';
@@ -12,6 +12,7 @@ export class ApiService {
   private host = 'http://localhost:8080/';
   private authUrl = this.host + 'auth/';
   private calendarUrl = this.host + 'calendar';
+  private databaseUrl = this.host + 'database';
   private customerUrl = this.host + 'customer';
   private projectUrl = this.host + 'project';
   private employeeUrl = this.host + 'employee';
@@ -94,6 +95,20 @@ export class ApiService {
 
   updateUser(user) {
     return this.http.put<any>(this.authUrl + 'user', user, this.getAuthHeaders());
+  }
+
+  backupDatabase() {
+    return this.http.post(`${this.databaseUrl}/backup`, null, { responseType: 'text', headers: new HttpHeaders(this.getAuthHeaders().headers) });
+  }
+
+  restoreDatabase(file) {
+    const formData = new FormData();
+    console.log(file);
+    formData.append('file', file, file.name.split('.')[0]);
+    return this.http.post(`${this.databaseUrl}/restore`, formData,
+        {
+          headers: new HttpHeaders(this.getAuthHeaders().headers)
+        });
   }
 
   private getAuthHeaders() {

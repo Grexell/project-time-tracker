@@ -1,7 +1,7 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
-import {of} from "rxjs";
+import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {MatCalendar} from "@angular/material/datepicker";
 import {ApiService} from "../../api.service";
+import { saveAs } from "file-saver";
 
 class Holiday {
   constructor(public id?: number, public date?: string, public transferDate?: string) {
@@ -18,12 +18,11 @@ export class SettingsComponent implements OnInit {
   selectedDate: any;
   selectedCalendar: any;
   holidays: any[];
-      // new Holiday(1, new Date(), new Date('2021-03-17'))
-  // ];
   dates = new Set();
   transfers = new Set();
   holiday = new Holiday();
 
+  @ViewChild('files') file: ElementRef;
   @ViewChild('calendar') calendar: MatCalendar<Date>;
 
   constructor(private api: ApiService) { }
@@ -114,5 +113,16 @@ export class SettingsComponent implements OnInit {
           this.holidays.splice(this.holidays.indexOf(holiday), 1);
           this.splitDates();
         });
+  }
+
+  backup() {
+    this.api.backupDatabase().subscribe(file => {
+      saveAs(new Blob([file], {type: "text/plain;charset=utf-8"}), 'backup.dump');
+      // saveAs(file, 'backup');
+    });
+  }
+
+  restore(file) {
+    this.api.restoreDatabase(file).subscribe(() => this.file.nativeElement.value = '');
   }
 }

@@ -25,6 +25,10 @@ spring:
           uri: lb://EMPLOYEE-SERVER
           predicates:
             - Path=/user/**
+        - id: database
+          uri: lb://DATABASE-SERVER
+          predicates:
+            - Path=/database/**
       default-filters:
         - DedupeResponseHeader=Access-Control-Allow-Credentials Access-Control-Allow-Origin, RETAIN_UNIQUE
       globalcors:

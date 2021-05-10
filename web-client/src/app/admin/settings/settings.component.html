@@ -1,3 +1,9 @@
+<div class="p-3">
+    <div class="mat-title">Database</div>
+    <input class="d-none" id="input-file-id" type="file" #files (change)="files.files && files.files[0] && restore(files.files[0]); " />
+    <label class="mx-2 mat-raised-button" for="input-file-id">Restore Database</label>
+    <button mat-raised-button color="primary" (click)="backup()">Backup Database</button>
+</div>
 <div class="d-flex py-3">
     <div class="col-4 px-3">
         <mat-selection-list multiple="false" (selectionChange)="selectCalendar($event)">
@@ -39,4 +45,3 @@
         </mat-list>
     </div>
 </div>
-
