@@ -1,4 +1,4 @@
-<mat-tab-group color="primary" backgroundColor="primary" *ngIf="portalType === 'admin'">
+<mat-tab-group color="primary" backgroundColor="primary" *ngIf="portalType === 'admin'" [dynamicHeight]="true">
     <mat-tab label="Users">
         <app-user-tab></app-user-tab>
     </mat-tab>
@@ -7,7 +7,7 @@
     </mat-tab>
 </mat-tab-group>
 
-<mat-tab-group color="primary" backgroundColor="primary" *ngIf="portalType === 'manager'">
+<mat-tab-group color="primary" backgroundColor="primary" *ngIf="portalType === 'manager'" [dynamicHeight]="true">
     <mat-tab label="Projects">
         <app-project-tab></app-project-tab>
     </mat-tab>
@@ -19,7 +19,7 @@
     </mat-tab>
 </mat-tab-group>
 
-<mat-tab-group color="primary" backgroundColor="primary" *ngIf="portalType === 'user'" selectedIndex="2">
+<mat-tab-group color="primary" backgroundColor="primary" *ngIf="portalType === 'user'" [dynamicHeight]="true">
     <mat-tab label="Projects">
         <app-projects></app-projects>
     </mat-tab>

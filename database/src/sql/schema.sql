@@ -264,6 +264,7 @@ END //
 
 DELIMITER ;
 
+DROP PROCEDURE IF EXISTS finish_project;
 DELIMITER //
 
 CREATE PROCEDURE finish_project(project_id bigint, user_id bigint)
@@ -272,10 +273,10 @@ BEGIN
     SELECT up.project_id INTO project
     FROM `user`
         INNER JOIN role r on `user`.role_id = r.id
-        INNER JOIN user_project up on `user`.id = up.user_id WHERE r.name = 'manager';
+        INNER JOIN user_project up on `user`.id = up.user_id WHERE up.project_id = project_id and r.name = 'manager';
     if (project <> 0) then
         begin
-            update project set end_date = curdate() where project_id = project;
+            update project p set p.end_date = curdate() where p.id = project;
             INSERT INTO logs(`table`, operation, `row`, user_id, message)
             values ('project', 'finish_project', project, user_id, 'finish project');
         end;

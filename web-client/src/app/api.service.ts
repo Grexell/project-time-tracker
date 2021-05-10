@@ -116,6 +116,14 @@ export class ApiService {
     return this.http.post<any[]>(this.managedProjectUrl, project, this.getAuthHeaders());
   }
 
+  attachProject(project): Observable<any> {
+    return this.http.post<any>(`${this.managedProjectUrl}/${project.id}/attach`, null, this.getAuthHeaders());
+  }
+
+  endProject(project, endDate): Observable<any> {
+    return this.http.post<any>(`${this.managedProjectUrl}/${project.id}/finish?finishDate=${endDate}`, null, this.getAuthHeaders());
+  }
+
   loadCalendars(): Observable<any[]> {
     return this.http.get<any[]>(this.calendarUrl, this.getAuthHeaders());
   }
@@ -153,7 +161,7 @@ export class ApiService {
   }
 
   backupDatabase() {
-    return this.http.post(`${this.databaseUrl}/backup`, null, { responseType: 'text', headers: new HttpHeaders(this.getAuthHeaders().headers) });
+    return this.http.post(`${this.databaseUrl}/backup`, null, { responseType: 'text', headers: this.getAuthHeaders().headers });
   }
 
   restoreDatabase(file) {
@@ -162,7 +170,7 @@ export class ApiService {
     formData.append('file', file, file.name.split('.')[0]);
     return this.http.post(`${this.databaseUrl}/restore`, formData,
         {
-          headers: new HttpHeaders(this.getAuthHeaders().headers)
+          headers: this.getAuthHeaders().headers
         });
   }
 

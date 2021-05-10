@@ -8,7 +8,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 public interface ProjectDao extends ReactiveCrudRepository<ProjectDetails, Long> {
-    @Query("SELECT *, IF(manager_id = :#{#managerId}, 'True', 'False') AS attached  FROM manager_projects WHERE manager_id = :#{#managerId}")
+    @Query("SELECT *, IF(manager_id = :#{#managerId}, 'True', 'False') AS attached  FROM manager_projects WHERE manager_id = :#{#managerId} order by start_date desc")
     Flux<ProjectDetailsDto> findAll(Long managerId);
     @Query("CALL create_project(:#{#managerId}, :#{#project.name}, :#{#project.startDate}, :#{#project.budget}, @project_id); SELECT @project_id")
     Mono<Long> create(Long managerId, ProjectDetails project);

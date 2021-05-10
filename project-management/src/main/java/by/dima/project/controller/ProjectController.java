@@ -6,6 +6,7 @@ import by.dima.project.dto.ProjectDetailsDto;
 import by.dima.project.model.ProjectDetails;
 import by.dima.project.service.ProjectService;
 import by.dima.utils.TokenUtils;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
@@ -54,7 +55,9 @@ public class ProjectController {
     }
 
     @PostMapping("{projectId}/finish")
-    public ResponseEntity<Mono<Void>> finishProject(@PathVariable Long projectId, @RequestParam LocalDate finishDate, @RequestHeader(AUTHORIZATION) String authHeader) {
+    public ResponseEntity<Mono<Void>> finishProject(@PathVariable Long projectId,
+                                                    @RequestParam("finishDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate finishDate,
+                                                    @RequestHeader(AUTHORIZATION) String authHeader) {
         User user = TokenUtils.extractUser(authHeader);
         if (is(user, MANAGER_ROLE)) {
             return ResponseEntity.ok(projectService.finishProject(user.getId(), projectId, finishDate));

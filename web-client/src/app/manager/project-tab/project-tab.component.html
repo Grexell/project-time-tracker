@@ -42,20 +42,22 @@
             </ng-container>
             <ng-container matColumnDef="startDate">
                 <th mat-header-cell *matHeaderCellDef>Start Date</th>
-                <td mat-cell *matCellDef="let element">{{element.startDate}}</td>
+                <td mat-cell *matCellDef="let element" [width]="120">{{element.startDate}}</td>
             </ng-container>
             <ng-container matColumnDef="endDate">
                 <th mat-header-cell *matHeaderCellDef>End Date</th>
-                <td mat-cell *matCellDef="let element">{{element.endDate}}</td>
+                <td mat-cell *matCellDef="let element" [width]="120">{{element.endDate}}</td>
             </ng-container>
             <ng-container matColumnDef="budget">
-                <th mat-header-cell *matHeaderCellDef>Budget</th>
+                <th mat-header-cell *matHeaderCellDef [width]="150">Budget</th>
                 <td mat-cell *matCellDef="let element">{{element.budget | currency}}</td>
             </ng-container>
             <ng-container matColumnDef="actions">
-                <th mat-header-cell *matHeaderCellDef>Actions</th>
+                <th mat-header-cell *matHeaderCellDef [width]="200">Actions</th>
                 <td mat-cell *matCellDef="let element">
-
+                    <mat-chip *ngIf="!element.attached" class="mx-3 pointer" selected color="accent" (click)="attachProject(element)">Attach</mat-chip>
+                    <mat-chip *ngIf="element.attached" class="mx-3 pointer" selected color="accent">Edit</mat-chip>
+                    <mat-chip *ngIf="element.attached && !element.endDate" class="mx-3 pointer" selected color="accent" (click)="openEndProjectModal(element, finishModal)">End</mat-chip>
                 </td>
             </ng-container>
 
@@ -76,3 +78,20 @@
         </table>
     </div>
 </div>
+
+<ng-template #finishModal let-data>
+    <h2 mat-dialog-title>Are you sure you want to finish {{data.subject}}?</h2>
+    <mat-dialog-content class="mat-typography">
+        <p>This cannot be undone.</p>
+        <mat-form-field class="full-width">
+            <mat-label>End Date</mat-label>
+            <input #endDateInput matInput [matDatepicker]="endDate" [value]="data.startDate">
+            <mat-datepicker-toggle matSuffix [for]="endDate"></mat-datepicker-toggle>
+            <mat-datepicker #endDate></mat-datepicker>
+        </mat-form-field>
+    </mat-dialog-content>
+    <mat-dialog-actions align="end">
+        <button mat-flat-button [mat-dialog-close]>Cancel</button>
+        <button mat-flat-button cdkFocusInitial color="warn" [mat-dialog-close]="endDateInput.value">Finish</button>
+    </mat-dialog-actions>
+</ng-template>

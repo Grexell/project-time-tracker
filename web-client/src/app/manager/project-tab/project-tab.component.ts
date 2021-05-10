@@ -4,17 +4,25 @@ import {CustomerDialogComponent} from '../customer-dialog/customer-dialog.compon
 import {ConfirmDialogComponent} from '../../common/confirm-dialog/confirm-dialog.component';
 import {ProjectDialogComponent} from '../project-dialog/project-dialog.component';
 import {ApiService} from "../../api.service";
+import {animate, state, style, transition, trigger} from "@angular/animations";
 
 @Component({
   selector: 'app-project-tab',
   templateUrl: './project-tab.component.html',
-  styleUrls: ['./project-tab.component.scss']
+  styleUrls: ['./project-tab.component.scss'],
+  animations: [
+    trigger('detailExpand', [
+      state('collapsed', style({height: '0px', minHeight: '0'})),
+      state('expanded', style({height: '*'})),
+      transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
+    ]),
+  ],
 })
 export class ProjectTabComponent implements OnInit {
   customers = [];
   selectedCustomers = [];
 
-  projectTableColumns = ['project', 'budget', 'startDate', 'endDate', 'actions'];
+  projectTableColumns = ['project', 'startDate', 'endDate', 'budget', 'actions'];
 
   projects = [];
   projectFilter: string;
@@ -111,6 +119,22 @@ export class ProjectTabComponent implements OnInit {
           this.projects.push(project);
           this.filterProjects();
         })
+      }
+    });
+  }
+
+  attachProject(project) {
+    this.api.attachProject(project).subscribe(() => project.attached = true);
+  }
+
+  openEndProjectModal(project, content) {
+    this.dialog.open(content, {
+      data: { subject: project.name, startDate: new Date() },
+      disableClose: true
+    }).beforeClosed().subscribe(result => {
+      if (result) {
+        let date = new Date(result).toISOString().split('T').shift();
+        this.api.endProject(project, date).subscribe(() => this.loadProjects());
       }
     });
   }
