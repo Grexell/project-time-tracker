@@ -13,5 +13,4 @@ public class Report {
     private Date date;
     private Double hours;
     private Long taskId;
-    private Long userId;
 }

@@ -1,10 +1,7 @@
 package by.dima.employee.model;
 
-import by.dima.model.User;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.annotation.Transient;
 
 import java.time.LocalDate;
 
@@ -18,9 +15,6 @@ public class Vacation {
     private boolean approved;
     private boolean viewed;
 
-    @JsonIgnore
+//    todo add transient user name and, email
     private Long userId;
-
-    @Transient
-    private User user;
 }

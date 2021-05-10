@@ -12,7 +12,8 @@ import reactor.core.publisher.Mono;
 
 import static by.dima.utils.TokenUtils.*;
 
-@RestController("/vacation")
+@RestController
+@RequestMapping("/vacation")
 public class VacationController {
     private final VacationService vacationService;
 
@@ -23,8 +24,20 @@ public class VacationController {
     @GetMapping
     public ResponseEntity<Flux<Vacation>> getVacations(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
         User user = TokenUtils.extractUser(authHeader);
+        return ResponseEntity.ok(vacationService.getVacations(user.getId()));
+    }
+
+    @GetMapping("team")
+    public ResponseEntity<Flux<Vacation>> getTeamVacations(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
+        User user = TokenUtils.extractUser(authHeader);
+        return ResponseEntity.ok(vacationService.getTeamVacations(user.getId()));
+    }
+
+    @GetMapping("managed")
+    public ResponseEntity<Flux<Vacation>> getManagedVacations(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
+        User user = TokenUtils.extractUser(authHeader);
         if (is(user, MANAGER_ROLE)) {
-            return ResponseEntity.ok(vacationService.getVacations(user.getId()));
+            return ResponseEntity.ok(vacationService.getManagedVacations(user.getId()));
         }
         return ResponseEntity.badRequest().build();
     }
@@ -38,16 +51,18 @@ public class VacationController {
 
     @PostMapping("{vacationId}/accept")
     public ResponseEntity<Mono<Void>> acceptVacation(@PathVariable Long vacationId, @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
-        if (is(authHeader, MANAGER_ROLE)) {
-            return ResponseEntity.ok(vacationService.acceptVacation(vacationId));
+        User user = TokenUtils.extractUser(authHeader);
+        if (is(user, MANAGER_ROLE)) {
+            return ResponseEntity.ok(vacationService.acceptVacation(user.getId(), vacationId));
         }
         return ResponseEntity.badRequest().build();
     }
 
     @PostMapping("{vacationId}/reject")
     public ResponseEntity<Mono<Void>> rejectVacation(@PathVariable Long vacationId, @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
-        if (is(authHeader, MANAGER_ROLE)) {
-            return ResponseEntity.ok(vacationService.rejectVacation(vacationId));
+        User user = TokenUtils.extractUser(authHeader);
+        if (is(user, MANAGER_ROLE)) {
+            return ResponseEntity.ok(vacationService.rejectVacation(user.getId(), vacationId));
         }
         return ResponseEntity.badRequest().build();
     }

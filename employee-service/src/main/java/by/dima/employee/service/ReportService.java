@@ -6,6 +6,6 @@ import reactor.core.publisher.Mono;
 
 public interface ReportService {
     Flux<Report> getReports(Long user);
-    Mono<Report> createReport(Report report);
-    Mono<Report> updateReport(Report report);
+    Mono<Report> createReport(Long user, Report report);
+    Mono<Report> updateReport(Long user, Report report);
 }

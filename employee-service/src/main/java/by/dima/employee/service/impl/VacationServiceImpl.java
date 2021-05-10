@@ -16,8 +16,19 @@ public class VacationServiceImpl implements VacationService {
     }
 
     @Override
-    public Flux<Vacation> getVacations(Long managerId) {
-        return vacationDao.findAllByManager(managerId);
+    public Flux<Vacation> getVacations(Long userId) {
+        return vacationDao.findAllByUserId(userId);
+    }
+
+    @Override
+    public Flux<Vacation> getTeamVacations(Long userId) {
+        return vacationDao.findTeamByUserId(userId);
+    }
+
+    @Override
+    public Flux<Vacation> getManagedVacations(Long managerId) {
+        return vacationDao.saveAll(vacationDao.findAllByManagerId(managerId)
+                .doOnNext(vacation -> vacation.setViewed(true)));
     }
 
     @Override
@@ -26,12 +37,12 @@ public class VacationServiceImpl implements VacationService {
     }
 
     @Override
-    public Mono<Void> acceptVacation(Long vacationId) {
-        return null;
+    public Mono<Void> acceptVacation(Long managerId, Long vacationId) {
+        return vacationDao.acceptVacation(managerId, vacationId);
     }
 
     @Override
-    public Mono<Void> rejectVacation(Long vacationId) {
-        return null;
+    public Mono<Void> rejectVacation(Long managerId, Long vacationId) {
+        return vacationDao.rejectVacation(managerId, vacationId);
     }
 }

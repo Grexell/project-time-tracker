@@ -2,11 +2,16 @@ package by.dima.employee.controller;
 
 import by.dima.employee.service.ReportService;
 import by.dima.model.Report;
+import by.dima.model.User;
+import org.springframework.http.HttpHeaders;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-@RestController("/report")
+import static by.dima.utils.TokenUtils.extractUser;
+
+@RestController
+@RequestMapping("/report")
 public class ReportController {
 
     private final ReportService reportService;
@@ -16,17 +21,20 @@ public class ReportController {
     }
 
     @GetMapping
-    public Flux<Report> getReports(Long user) {
-        return reportService.getReports(user);
+    public Flux<Report> getReports(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
+        User user = extractUser(authHeader);
+        return reportService.getReports(user.getId());
     }
 
     @PostMapping
-    public Mono<Report> createReport(@RequestBody Report report) {
-        return reportService.createReport(report);
+    public Mono<Report> createReport(@RequestBody Report report, @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
+        User user = extractUser(authHeader);
+        return reportService.createReport(user.getId(), report);
     }
 
     @PutMapping
-    public Mono<Report> updateReport(@RequestBody Report report) {
-        return reportService.updateReport(report);
+    public Mono<Report> updateReport(@RequestBody Report report, @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
+        User user = extractUser(authHeader);
+        return reportService.updateReport(user.getId(), report);
     }
 }
