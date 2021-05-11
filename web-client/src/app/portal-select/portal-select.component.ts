@@ -12,6 +12,9 @@ export class PortalSelectComponent implements OnInit {
 
     constructor(private auth: AuthService, private router: Router) {
         this.userType = auth.getUserRole();
+        if (this.userType === 'user') {
+            this.selectPortal('user');
+        }
     }
 
     ngOnInit(): void {

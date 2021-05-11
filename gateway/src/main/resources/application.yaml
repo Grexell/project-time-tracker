@@ -25,6 +25,8 @@ spring:
           uri: lb://EMPLOYEE-SERVER
           predicates:
             - Path=/user/**
+          filters:
+            - RewritePath=/user/(?<remaining>.*), /$\{remaining}
         - id: database
           uri: lb://DATABASE-SERVER
           predicates:

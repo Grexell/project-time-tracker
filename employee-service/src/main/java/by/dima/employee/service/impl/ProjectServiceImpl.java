@@ -10,6 +10,8 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.time.LocalDate;
+
 @Service
 public class ProjectServiceImpl implements ProjectService {
     private final ProjectDao projectDao;
@@ -35,6 +37,7 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     public Mono<Task> createTask(Long userId, Task task) {
         return userDao.findByUserIdAndProjectId(userId, task.getProjectId()).flatMap(user -> {
+            task.setStartDate(LocalDate.now());
             task.setUserId(user.getUserId());
             return taskDao.save(task);
         });

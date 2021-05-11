@@ -8,8 +8,6 @@ import {ApiService} from "../../api.service";
 })
 export class ProjectsComponent implements OnInit {
   projects = [];
-  selectedProject: any;
-  tasks: any[];
   projectFilter: string;
   filteredProjects = [];
 
@@ -20,16 +18,25 @@ export class ProjectsComponent implements OnInit {
   }
 
   private loadProjects() {
-    this.api.loadProjects().subscribe(projects => this.projects = projects);
+    this.api.loadProjects().subscribe(projects => {
+      this.projects = projects;
+      this.projects.forEach(project => project.task = {})
+      this.filterProjects();
+    });
   }
 
-  loadTasks() {
-    this.tasks = [];
-    this.api.loadTasks(this.selectedProject.id).subscribe(tasks => this.tasks = tasks);
+  loadTasks(project: any) {
+    this.api.loadTasks(project.id).subscribe(tasks => project.tasks = tasks);
   }
 
   filterProjects() {
     this.filteredProjects = this.projects
-        .filter(project => project.name.includes(this.projectFilter));
+        .filter(project => !this.projectFilter || project.name.includes(this.projectFilter));
+  }
+
+  saveTask(project, task) {
+    const task$ = task.id ? this.api.updateTask(project.id, task) : this.api.createTask(project.id, task);
+    task$.subscribe(() => this.loadTasks(project));
+    project.task = {};
   }
 }

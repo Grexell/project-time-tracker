@@ -7,25 +7,53 @@
             <mat-label>Search</mat-label>
             <input  matInput type="text" [ngModel]="projectFilter" (ngModelChange)="projectFilter = $event; filterProjects()">
         </mat-form-field>
-        <mat-accordion displayMode="flat" multi="true" *ngFor="let project of filteredProjects">
-            <mat-expansion-panel hideToggle (opened)="selectedProject = project; loadTasks()" (closed)="selectedProject = null">
+        <mat-accordion multi>
+            <mat-expansion-panel *ngFor="let project of filteredProjects" hideToggle (opened)="loadTasks(project)" [expanded]="false">
                 <mat-expansion-panel-header>
                     <mat-panel-title>
                         {{project.name}}
                     </mat-panel-title>
-<!--                    <mat-panel-description>-->
-<!--                        Type your name and age-->
-<!--                        <mat-icon>account_circle</mat-icon>-->
-<!--                    </mat-panel-description>-->
+                    <mat-panel-description>
+                        From: {{project.startDate}} {{project.endDate? 'To: ' + project.endDate : ''}}
+                    </mat-panel-description>
                 </mat-expansion-panel-header>
-
-                <!--                    <mat-form-field>-->
-                <!--                        <mat-label>First name</mat-label>-->
-                <!--                        <input matInput>-->
-                <!--                    </mat-form-field>-->
-                <mat-action-row>
-                    <button mat-button color="primary">Add Task</button>
-                </mat-action-row>
+                <mat-divider></mat-divider>
+                <div class="mat-title pt-3">Tasks</div>
+                <div class="row">
+                    <div class="col-3">
+                        <mat-form-field class="full-width">
+                            <mat-label>Name</mat-label>
+                            <input matInput #nameInput="ngModel" type="text" required [(ngModel)]="project.task.name">
+                        </mat-form-field>
+                        <mat-form-field class="full-width">
+                            <mat-label>Urgency</mat-label>
+                            <input matInput #urgencyInput="ngModel" type="number" [(ngModel)]="project.task.urgency" required>
+                        </mat-form-field>
+                        <mat-form-field class="full-width">
+                            <mat-label>Complexity</mat-label>
+                            <input matInput #complexityInput="ngModel" type="number" [(ngModel)]="project.task.complexity" required>
+                        </mat-form-field>
+                        <button style="margin-right: 15px;" mat-stroked-button
+                                (click)="project.task = {};nameInput.reset();urgencyInput.reset();complexityInput.reset()">Cancel</button>
+                        <button [disabled]="nameInput.invalid || urgencyInput.invalid || complexityInput.invalid"
+                                mat-button color="primary"
+                                (click)="saveTask(project, project.task);nameInput.reset();urgencyInput.reset();complexityInput.reset()">
+                            {{project.task.id ? 'Save' : 'Create'}} Task</button>
+                    </div>
+                    <div class="col-9">
+                        <mat-list>
+                            <mat-list-item *ngFor="let task of project.tasks; last as last">
+                                <div class="d-flex flex-grow-1 justify-content-between align-items-center">
+                                    <div mat-line>{{task.name}}</div>
+                                    <button mat-icon-button color="primary" (click)="project.task = task">
+                                        <mat-icon>edit</mat-icon>
+                                    </button>
+                                </div>
+                                <mat-divider *ngIf="!last"></mat-divider>
+                            </mat-list-item>
+                        </mat-list>
+                    </div>
+                </div>
             </mat-expansion-panel>
         </mat-accordion>
     </div>

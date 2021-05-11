@@ -5,14 +5,15 @@ import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Transient;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 @Data
 public class Task {
     @Id
     private Long id;
     private String name;
-    private Date createdAt;
+    private LocalDate startDate;
+    private LocalDate endDate;
     private int urgency;
     private int complexity;
     @JsonIgnore
