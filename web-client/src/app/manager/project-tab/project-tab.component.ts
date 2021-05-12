@@ -5,6 +5,7 @@ import {ConfirmDialogComponent} from '../../common/confirm-dialog/confirm-dialog
 import {ProjectDialogComponent} from '../project-dialog/project-dialog.component';
 import {ApiService} from "../../api.service";
 import {animate, state, style, transition, trigger} from "@angular/animations";
+import {formatISO} from "date-fns";
 
 @Component({
   selector: 'app-project-tab',
@@ -133,7 +134,7 @@ export class ProjectTabComponent implements OnInit {
       disableClose: true
     }).beforeClosed().subscribe(result => {
       if (result) {
-        let date = new Date(result).toISOString().split('T').shift();
+        let date = formatISO(new Date(result), { representation: 'date' });
         this.api.endProject(project, date).subscribe(() => this.loadProjects());
       }
     });

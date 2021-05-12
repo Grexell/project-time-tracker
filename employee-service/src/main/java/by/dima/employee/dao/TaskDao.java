@@ -9,6 +9,6 @@ import reactor.core.publisher.Mono;
 public interface TaskDao extends ReactiveCrudRepository<Task, Long> {
     @Query("SELECT * FROM task t where exists(select * from user_project up where up.id = t.user_id and up.user_id =:#{#userId} and up.project_id =:#{#projectId})")
     Flux<Task> findAllByUserAndProject(long userId, long projectId);
-    @Query("SELECT * FROM task t where exists(select * from user_project up where up.user_id = t.id and up.user_id =:#{#userId}) and t.id = :#{#id}")
+    @Query("SELECT * FROM task t where exists(select * from user_project up where up.id = t.user_id and up.user_id =:#{#userId}) and t.id = :#{#id}")
     Mono<Task> findByUserAndId(long userId, long id);
 }

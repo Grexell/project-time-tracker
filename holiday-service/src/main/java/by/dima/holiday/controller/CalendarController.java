@@ -3,6 +3,7 @@ package by.dima.holiday.controller;
 import by.dima.holiday.service.CalendarService;
 import by.dima.model.Calendar;
 import by.dima.model.Holiday;
+import by.dima.model.User;
 import by.dima.utils.TokenUtils;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
@@ -51,6 +52,12 @@ public class CalendarController {
             return ResponseEntity.ok(calendarService.getHolidays(calendarId));
         }
         return ResponseEntity.badRequest().build();
+    }
+
+    @GetMapping("holiday")
+    public ResponseEntity<Flux<Holiday>> getCurrentHolidays(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
+        User user = TokenUtils.extractUser(authHeader);
+        return ResponseEntity.ok(calendarService.getCurrentHolidays(user.getId()));
     }
 
     @PostMapping("{calendarId}/holiday")

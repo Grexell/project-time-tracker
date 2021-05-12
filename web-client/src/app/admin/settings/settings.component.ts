@@ -2,6 +2,7 @@ import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {MatCalendar} from "@angular/material/datepicker";
 import {ApiService} from "../../api.service";
 import { saveAs } from "file-saver";
+import {formatISO} from "date-fns";
 
 class Holiday {
   constructor(public id?: number, public date?: string, public transferDate?: string) {
@@ -47,11 +48,11 @@ export class SettingsComponent implements OnInit {
 
   onSelect($event: any) {
     if (!this.holiday.date) {
-      this.holiday.date = $event.toISOString();
+      this.holiday.date = formatISO($event, { representation: 'date' });
     } else if (!this.holiday.transferDate) {
-      this.holiday.transferDate = $event.toISOString();
+      this.holiday.transferDate = formatISO($event, { representation: 'date' });
     } else {
-      this.holiday.date = $event.toISOString();
+      this.holiday.date = formatISO($event, { representation: 'date' });
       this.holiday.transferDate = null;
     }
     this.calendar.updateTodaysDate();
@@ -59,7 +60,7 @@ export class SettingsComponent implements OnInit {
 
   dateClass() {
     return (date: Date) => {
-      const dateStr = date.toISOString().split('T').shift();
+      const dateStr = formatISO(date, { representation: 'date' });
       if (this.holiday && this.holiday.date && dateStr == this.holiday.date) {
         return 'selected-start-date';
       } else if (this.holiday && this.holiday.transferDate && dateStr == this.holiday.transferDate) {

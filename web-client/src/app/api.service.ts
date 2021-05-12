@@ -152,6 +152,10 @@ export class ApiService {
     return this.http.get<any[]>(`${this.calendarUrl}/${calendar.id}/holiday`, this.getAuthHeaders());
   }
 
+  loadCurrentHolidays() {
+    return this.http.get<any[]>(`${this.calendarUrl}/holiday`, this.getAuthHeaders());
+  }
+
   createHoliday(calendar, holiday) {
     return this.http.post<any>(`${this.calendarUrl}/${calendar.id}/holiday`, holiday, this.getAuthHeaders());
   }

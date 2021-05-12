@@ -11,6 +11,7 @@ public interface CalendarService {
     Mono<Calendar> deleteCalendar(Long calendarId);
 
     Flux<Holiday> getHolidays(Long calendarId);
+    Flux<Holiday> getCurrentHolidays(Long userId);
     Mono<Holiday> createHoliday(Holiday holiday);
     Mono<Holiday> deleteHoliday(Long holidayId);
 }

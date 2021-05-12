@@ -42,6 +42,11 @@ public class CalendarServiceImpl implements CalendarService {
     }
 
     @Override
+    public Flux<Holiday> getCurrentHolidays(Long userId) {
+        return holidayDao.findAllByUserId(userId);
+    }
+
+    @Override
     public Mono<Holiday> createHoliday(Holiday holiday) {
         return holidayDao.save(holiday);
     }
