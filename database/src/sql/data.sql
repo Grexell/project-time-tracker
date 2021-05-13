@@ -21,7 +21,12 @@ values ('admin', 'admin', 'admin@company.com', '$2a$10$EFEJzuZA3DLrNeB8bIWv9eviq
 insert into time_tracker.customer(name, contact)
 values ('Internal', 'ceo@company.com');
 
-INSERT INTO time_tracker.user (id, email, password, first_name, second_name, role_id, calendar_id)
-VALUES (2, 'employee1@company.com', '$2a$10$H3wKhq0913mlPMKF0P5X4OZkZ2qYcpFMUHs7m2VbVrng5M5fnQhwa', 'employee', 'employee', 3, 1);
-INSERT INTO time_tracker.user (id, email, password, first_name, second_name, role_id, calendar_id)
-VALUES (3, 'manager@company.com', '$2a$10$4SiSVmLTv8GBd01TEL6Oy.ORzk9UVN8ojWO5uXiMRZzCGSTiR0yH2', 'manager', 'manager', 2, 1);
+INSERT INTO time_tracker.user (email, password, first_name, second_name, role_id, calendar_id)
+VALUES ('dev@company.com', '$2a$10$H3wKhq0913mlPMKF0P5X4OZkZ2qYcpFMUHs7m2VbVrng5M5fnQhwa', 'Jane', 'Alexander', 3, 1),
+       ('qa@company.com', '$2a$10$H3wKhq0913mlPMKF0P5X4OZkZ2qYcpFMUHs7m2VbVrng5M5fnQhwa', 'Mitchell', 'Alvarez', 3, 1),
+       ('devops@company.com', '$2a$10$H3wKhq0913mlPMKF0P5X4OZkZ2qYcpFMUHs7m2VbVrng5M5fnQhwa', 'Adrian', 'Burns', 3, 1),
+       ('pm@company.com', '$2a$10$H3wKhq0913mlPMKF0P5X4OZkZ2qYcpFMUHs7m2VbVrng5M5fnQhwa', 'David', 'Miller', 2, 1);
+
+insert into `position`(name) values('Junior Software Engineer'), ('Software Engineer'),('Team Lead'),('QA Engineer'), ('DevOps');
+
+insert into task
