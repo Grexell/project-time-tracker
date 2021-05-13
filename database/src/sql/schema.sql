@@ -43,7 +43,7 @@ CREATE TABLE user_project(
     id bigint primary key auto_increment,
     user_id bigint,
     project_id bigint,
-    foreign key (user_id) references user(id),
+    foreign key (user_id) references user(id) on delete cascade,
     foreign key (project_id) references project(id)
 );
 
@@ -52,7 +52,7 @@ CREATE TABLE bonus(
     user_id bigint,
     amount double not null,
     date date not null,
-    foreign key (user_id) references user_project(id)
+    foreign key (user_id) references user_project(id) on delete cascade
 );
 
 CREATE TABLE salary(
@@ -61,7 +61,7 @@ CREATE TABLE salary(
     amount double not null,
     change_date date not null,
     monthly boolean,
-    foreign key (user_id) references user_project(id)
+    foreign key (user_id) references user_project(id) on delete cascade
 );
 
 CREATE TABLE task(
@@ -72,7 +72,7 @@ CREATE TABLE task(
     user_id bigint,
     urgency int,
     complexity int,
-    foreign key (user_id) references user_project(id)
+    foreign key (user_id) references user_project(id) on delete cascade
 );
 
 CREATE TABLE report(
@@ -81,7 +81,7 @@ CREATE TABLE report(
     date date not null,
     time bigint not null,
     task_id bigint,
-    foreign key (task_id) references task(id)
+    foreign key (task_id) references task(id) on delete cascade
 );
 
 CREATE TABLE customer(
@@ -94,7 +94,7 @@ CREATE TABLE customer_project(
     customer_id bigint,
     project_id bigint,
     primary key (customer_id, project_id),
-    foreign key (customer_id) references customer(id),
+    foreign key (customer_id) references customer(id) on delete cascade,
     foreign key (project_id) references project(id)
 );
 
@@ -152,13 +152,19 @@ from user u
 where not exists(select 1 from user_project up where up.user_id = u.id)
   and u.role_id != 2;
 
+drop view if EXISTS manager_user_details;
+
+create view manager_user_details as
+select mu.*, get_month_salary(CURDATE(), id) as salary, get_position(CURDATE(), id) as position
+from manager_users mu;
+
 drop view if exists vacation_details;
 create view vacation_details as
     select *, get_vacation_end(v.start_date, v.length, v.user_id) as end_date from vacation v;
 
 drop view if EXISTS current_salary;
 create view current_salary as
-    select * from salary order by change_date desc;
+    select * from salary order by change_date desc, id desc;
 
 drop view if EXISTS current_position;
 create view current_position as
@@ -372,14 +378,14 @@ BEGIN
     from user_project up
         inner join project p on p.id = up.project_id
     where up.user_id = user
-      and p.start_date >= date and (p.end_date is null or p.end_date <= date)), 0);
+      and p.start_date <= date and (p.end_date is null or p.end_date >= date)), 0);
     set project_count = (select distinct count(*) from user_project up where up.user_id = user);
     if (project_count > 0) then
         set hours_per_project = (select get_working_days(date, u.calendar_id) * 8 / project_count from user u where u.id = user);
-        set salary = salary + (select sum(IFNULL(get_project_salary(date, up.id, false) * hours_per_project, 0))
+        set salary = salary + ifnull((select sum(IFNULL(get_project_salary(date, up.id, false) * hours_per_project, 0))
                                from user_project up
                                         inner join project p on p.id = up.project_id
-                               where up.user_id = user and  p.start_date >= date and (p.end_date is null or p.end_date <= date));
+                               where up.user_id = user and  p.start_date <= date and (p.end_date is null or p.end_date >= date)), 0);
     end if;
     return salary;
 END; //

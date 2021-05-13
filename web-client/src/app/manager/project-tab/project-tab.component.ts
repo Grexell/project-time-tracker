@@ -6,6 +6,7 @@ import {ProjectDialogComponent} from '../project-dialog/project-dialog.component
 import {ApiService} from "../../api.service";
 import {animate, state, style, transition, trigger} from "@angular/animations";
 import {formatISO} from "date-fns";
+import {Observable} from "rxjs";
 
 @Component({
   selector: 'app-project-tab',
@@ -30,6 +31,7 @@ export class ProjectTabComponent implements OnInit {
   filteredProjects = [];
   selectedProjects = [];
   users = [];
+  positions: any[];
 
   constructor(private api: ApiService, public dialog: MatDialog) { }
 
@@ -42,11 +44,25 @@ export class ProjectTabComponent implements OnInit {
   }
 
   private loadProjects() {
+    this.loadPositions();
     this.api.loadCustomers().subscribe(customers => this.customers = customers);
-    this.api.loadEmployees().subscribe(users => this.users = users);
     this.api.loadManagedProjects().subscribe(projects => {
       this.projects = projects;
       this.filterProjects();
+    });
+  }
+
+  private loadPositions() {
+    this.api.loadPositions().subscribe(positions => {
+      this.positions = positions;
+      this.api.loadEmployees().subscribe(users => {
+        this.users = users;
+        this.users.forEach(user => {
+          let position = this.positions.find(position => position.id === user.position);
+          user.positionName = position ? position.name : '';
+        });
+        // this.filterUsers();
+      });
     });
   }
 
@@ -97,14 +113,30 @@ export class ProjectTabComponent implements OnInit {
   }
 
   openNewProjectModal() {
+    this.openProjectModal({
+      customers: [],
+      team: []
+    });
+  }
+
+  openEditProjectModal(project) {
+    project = { ...project};
+    project.customers = this.customers.filter(customer => project.customers
+        .map(cust => cust.customerId)
+        .includes(customer.id));
+    project.team = project.team.map(user => {
+      let find = this.users.find(u => user.userId === u.id);
+      return {...find, budget: user.budget, monthly: !!user.month, teamId: user.id};
+    });
+    this.openProjectModal(project);
+  }
+
+  private openProjectModal(project) {
     this.dialog.open(ProjectDialogComponent, {
       data: {
-        project: {
-          customers: [],
-          team: []
-        },
-        users: [...this.users],
-        customers: [...this.customers]
+        project,
+        users: this.users.filter(cust => !project.team.map(user => user.id).includes(cust.id)),
+        customers: this.customers.filter(cust => !project.customers.includes(cust))
       },
       disableClose: true,
       width: '90%'
@@ -114,12 +146,20 @@ export class ProjectTabComponent implements OnInit {
           return {customerId: customer.id}
         })
         result.team = result.team.map(user => {
-          return {userId: user.id, salary: user.budget, monthly: user.monthly}
+          let teamMember: any = {userId: user.id, salary: user.budget, monthly: user.monthly};
+          if (user.teamId) {
+            teamMember.id = user.teamId;
+          }
+          return teamMember
         })
-        this.api.createProject(result).subscribe(project => {
-          this.projects.push(project);
-          this.filterProjects();
-        })
+        if (!result.id) {
+          this.api.createProject(result).subscribe(project => {
+            this.projects.push(project);
+            this.filterProjects();
+          });
+        } else {
+          this.api.updateProject(result).subscribe(() => this.loadProjects());
+        }
       }
     });
   }
@@ -144,7 +184,7 @@ export class ProjectTabComponent implements OnInit {
     this.filteredProjects = this.projects
         .filter(project => !this.projectFilter || project.name.includes(this.projectFilter))
         .filter(project => this.selectedCustomers.every(customer => project.customers
-            .map(cust => cust.id)
+            .map(cust => cust.customerId)
             .includes(customer.id)));
   }
 }

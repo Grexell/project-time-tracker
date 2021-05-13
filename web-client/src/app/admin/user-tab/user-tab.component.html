@@ -19,7 +19,7 @@
                     <div class="example-element-detail" [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'">
                         <mat-chip-list aria-label="Fish selection" style="margin: 15px 0">
                             <mat-chip color="accent" selected (click)="edit(element)">Edit</mat-chip>
-                            <mat-chip color="warn" selected>Delete</mat-chip>
+                            <mat-chip color="warn" selected (click)="deleteUser(element)">Delete</mat-chip>
                         </mat-chip-list>
                     </div>
                 </td>

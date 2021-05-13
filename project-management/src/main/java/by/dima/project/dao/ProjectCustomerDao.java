@@ -8,5 +8,6 @@ import java.util.List;
 
 public interface ProjectCustomerDao {
     Flux<ProjectCustomer> findAllByProjectId(long projectId);
+    Mono<Void> deleteAll(long projectId);
     Mono<Void> saveAll(List<ProjectCustomer> entities);
 }

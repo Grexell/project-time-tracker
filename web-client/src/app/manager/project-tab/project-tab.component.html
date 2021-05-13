@@ -4,7 +4,7 @@
             <div class="mat-title">Customers</div>
             <mat-chip class="pointer" selected color="accent" (click)="openNewCustomerModal()">Add</mat-chip>
         </div>
-        <mat-selection-list [(ngModel)]="selectedCustomers">
+        <mat-selection-list [(ngModel)]="selectedCustomers" (ngModelChange)="filterProjects()">
             <mat-list-option *ngFor="let customer of customers" checkboxPosition="before" [value]="customer">
                 <div class="d-flex justify-content-between">
                     <div>
@@ -56,7 +56,7 @@
                 <th mat-header-cell *matHeaderCellDef [width]="200">Actions</th>
                 <td mat-cell *matCellDef="let element">
                     <mat-chip *ngIf="!element.attached" class="mx-3 pointer" selected color="accent" (click)="attachProject(element)">Attach</mat-chip>
-                    <mat-chip *ngIf="element.attached" class="mx-3 pointer" selected color="accent">Edit</mat-chip>
+                    <mat-chip *ngIf="element.attached && !element.endDate" class="mx-3 pointer" selected color="accent" (click)="openEditProjectModal(element)">Edit</mat-chip>
                     <mat-chip *ngIf="element.attached && !element.endDate" class="mx-3 pointer" selected color="accent" (click)="openEndProjectModal(element, finishModal)">End</mat-chip>
                 </td>
             </ng-container>

@@ -128,6 +128,10 @@ export class ApiService {
     return this.http.post<any[]>(this.managedProjectUrl, project, this.getAuthHeaders());
   }
 
+  updateProject(project): Observable<any[]> {
+    return this.http.put<any[]>(this.managedProjectUrl, project, this.getAuthHeaders());
+  }
+
   attachProject(project): Observable<any> {
     return this.http.post<any>(`${this.managedProjectUrl}/${project.id}/attach`, null, this.getAuthHeaders());
   }
@@ -173,7 +177,11 @@ export class ApiService {
   }
 
   updateUser(user) {
-    return this.http.put<any>(this.authUrl + 'user', user, this.getAuthHeaders());
+    return this.http.put<any>(`${this.authUrl}user`, user, this.getAuthHeaders());
+  }
+
+  deleteUser(user) {
+    return this.http.delete<any>(`${this.authUrl}user/${user.id}`, this.getAuthHeaders());
   }
 
   backupDatabase() {

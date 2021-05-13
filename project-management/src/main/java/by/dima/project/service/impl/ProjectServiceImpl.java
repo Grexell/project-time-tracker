@@ -16,6 +16,7 @@ import reactor.core.publisher.Mono;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ProjectServiceImpl implements ProjectService {
@@ -34,14 +35,13 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     public Flux<ProjectDetailsDto> getProjects(Long userId) {
         return projectDao.findAll(userId).flatMap(project -> Mono.zip(teamDao.findAllByProjectId(project.getId())
-                            .collectList()
-                            .doOnNext(project::setTeam)
-                            .then(),
+                            .collectList(),
                     customerDao.findAllByProjectId(project.getId())
-                            .collectList()
-                            .doOnNext(System.out::println)
-                            .doOnNext(project::setCustomers)
-                            .then()).thenReturn(project));
+                            .collectList()).map(tuple -> {
+            project.setTeam(tuple.getT1());
+            project.setCustomers(tuple.getT2());
+            return project;
+        }));
     }
 
     @Override
@@ -50,7 +50,7 @@ public class ProjectServiceImpl implements ProjectService {
             project.setId(projectId);
             project.setAttached(true);
 
-            List<TeamMember> team = project.getTeam();
+            List<? extends TeamMember> team = project.getTeam();
             team.forEach(member -> member.setProjectId(projectId));
 
             List<ProjectCustomer> customers = project.getCustomers();
@@ -59,6 +59,26 @@ public class ProjectServiceImpl implements ProjectService {
             return Mono.zip(teamDao.saveAll(team)
                     .flatMap(member -> salaryDao.increaseSalary(userId, member.getUserId(), member.getProjectId(), member.getSalary(), member.isMonthly()))
                     .then(), customerDao.saveAll(customers))
+                    .thenReturn(project);
+        });
+    }
+
+    @Override
+    public Mono<Project> updateProject(Long userId, ProjectDetails project) {
+        return  projectDao.save(project).flatMap(projectId -> {
+            project.setAttached(true);
+
+            List<? extends TeamMember> team = project.getTeam();
+            team.forEach(member -> member.setProjectId(projectId.getId()));
+
+            List<ProjectCustomer> customers = project.getCustomers();
+            customers.forEach(customer -> customer.setProjectId(projectId.getId()));
+
+            return Mono.zip(teamDao.saveAll(team)
+                    .flatMap(member -> salaryDao.increaseSalary(userId, member.getUserId(), member.getProjectId(), member.getSalary(), member.isMonthly()))
+                    .then(teamDao.deleteAllByIdNotInAndProjectId(team.stream().map(TeamMember::getId).collect(Collectors.toList()), projectId.getId()).then())
+                    .then(),
+                    customerDao.deleteAll(projectId.getId()).then(customerDao.saveAll(customers)))
                     .thenReturn(project);
         });
     }

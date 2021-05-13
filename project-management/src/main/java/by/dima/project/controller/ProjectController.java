@@ -45,6 +45,15 @@ public class ProjectController {
         return ResponseEntity.badRequest().build();
     }
 
+    @PutMapping
+    public ResponseEntity<Mono<Project>> updateProject(@RequestBody ProjectDetails project, @RequestHeader(AUTHORIZATION) String authHeader) {
+        User user = TokenUtils.extractUser(authHeader);
+        if (is(user, MANAGER_ROLE)) {
+            return ResponseEntity.ok(projectService.updateProject(user.getId(), project));
+        }
+        return ResponseEntity.badRequest().build();
+    }
+
     @PostMapping("{projectId}/attach")
     public ResponseEntity<Mono<Void>> attachProject(@PathVariable Long projectId, @RequestHeader(AUTHORIZATION) String authHeader) {
         User user = TokenUtils.extractUser(authHeader);

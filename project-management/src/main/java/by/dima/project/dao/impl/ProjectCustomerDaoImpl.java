@@ -27,6 +27,13 @@ public class ProjectCustomerDaoImpl implements ProjectCustomerDao {
     }
 
     @Override
+    public Mono<Void> deleteAll(long projectId) {
+        return  client.sql("delete from customer_project where project_id = :project")
+                .bind("project", projectId)
+                .then();
+    }
+
+    @Override
     public Mono<Void> saveAll(List<ProjectCustomer> entities) {
         return client.sql("insert into customer_project(customer_id, project_id) values :entities")
                 .bind("entities", entities.stream()

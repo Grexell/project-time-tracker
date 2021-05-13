@@ -38,7 +38,7 @@ public class ProjectServiceImpl implements ProjectService {
     public Mono<Task> createTask(Long userId, Task task) {
         return userDao.findByUserIdAndProjectId(userId, task.getProjectId()).flatMap(user -> {
             task.setStartDate(LocalDate.now());
-            task.setUserId(user.getUserId());
+            task.setUserId(user.getId());
             return taskDao.save(task);
         });
     }

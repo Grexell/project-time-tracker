@@ -77,6 +77,10 @@ export class UserTabComponent implements OnInit {
         }
     }
 
+    deleteUser(user) {
+        this.api.deleteUser(user).subscribe(() => this.loadUsers());
+    }
+
     clearForm() {
         this.editAction = 'new';
         this.editUser = {
