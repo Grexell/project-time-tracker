@@ -1,5 +1,6 @@
 package by.dima.employee.controller;
 
+import by.dima.employee.dto.VacationViewDetails;
 import by.dima.employee.model.Vacation;
 import by.dima.employee.service.VacationService;
 import by.dima.model.User;
@@ -22,19 +23,19 @@ public class VacationController {
     }
 
     @GetMapping
-    public ResponseEntity<Flux<Vacation>> getVacations(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
+    public ResponseEntity<Flux<VacationViewDetails>> getVacations(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
         User user = TokenUtils.extractUser(authHeader);
         return ResponseEntity.ok(vacationService.getVacations(user.getId()));
     }
 
     @GetMapping("team")
-    public ResponseEntity<Flux<Vacation>> getTeamVacations(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
+    public ResponseEntity<Flux<VacationViewDetails>> getTeamVacations(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
         User user = TokenUtils.extractUser(authHeader);
         return ResponseEntity.ok(vacationService.getTeamVacations(user.getId()));
     }
 
     @GetMapping("managed")
-    public ResponseEntity<Flux<Vacation>> getManagedVacations(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
+    public ResponseEntity<Flux<VacationViewDetails>> getManagedVacations(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
         User user = TokenUtils.extractUser(authHeader);
         if (is(user, MANAGER_ROLE)) {
             return ResponseEntity.ok(vacationService.getManagedVacations(user.getId()));

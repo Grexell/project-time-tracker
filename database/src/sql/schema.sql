@@ -151,9 +151,10 @@ select u.id, email, first_name, second_name, role_id, calendar_id, null as manag
 from user u
 where not exists(select 1 from user_project up where up.user_id = u.id)
   and u.role_id != 2;
-#
-# create view project_vacations as
-#     select * from vacation where ;
+
+drop view if exists vacation_details;
+create view vacation_details as
+    select *, get_vacation_end(v.start_date, v.length, v.user_id) as end_date from vacation v;
 
 drop view if EXISTS current_salary;
 create view current_salary as
@@ -247,7 +248,7 @@ DELIMITER //
 
 CREATE PROCEDURE approve_vacation(vacation bigint, user_id bigint)
 BEGIN
-    update vacation v set v.approved = true where v.id = vacation;
+    update vacation v set v.approved = true, v.viewed = true where v.id = vacation;
     INSERT INTO logs(`table`, operation, `row`, user_id, message)
     values ('vacation', 'approve_vacation', vacation, user_id, 'approve user vacation');
 END //
@@ -258,7 +259,7 @@ DELIMITER //
 
 CREATE PROCEDURE reject_vacation(vacation bigint, user_id bigint)
 BEGIN
-    update vacation v set v.approved = false where v.id = vacation;
+    update vacation v set v.approved = false, v.viewed = true where v.id = vacation;
     INSERT INTO logs(`table`, operation, `row`, user_id, message)
     values ('vacation', 'reject_vacation', vacation, user_id, 'reject user vacation');
 END //
@@ -295,20 +296,50 @@ CREATE TRIGGER project_delete before DELETE on project FOR EACH ROW begin
 end;
 SET GLOBAL log_bin_trust_function_creators = 1;
 
+drop function if exists get_business_days;
+
 DELIMITER //
 
+CREATE FUNCTION get_business_days(date_from date, date_to date, calendar_id bigint) RETURNS INT
+BEGIN
+    DECLARE days INT;
+    declare firstDate date;
+    declare lastDate date;
+    set firstDate = date_from;
+    set lastDate = date_add(date_to, interval 1 day);
+    SET days = 0;
+    set days = 5 * (DATEDIFF(lastDate, firstDate) DIV 7) + MID('0123455401234434012332340122123401101234000123450', 7 * WEEKDAY(firstDate) + WEEKDAY(lastDate) + 1, 1);
+    set days = days - (select distinct count(h.date)
+                       from holiday h
+                       where h.calendar_id = calendar_id
+                         and h.date > firstDate
+                         AND h.date < lastDate
+                         and not (DAYOFWEEK(h.date) = 7
+                           or DAYOFWEEK(h.date) = 1));
+    set days = days + (select distinct count(h.transfer_date)
+                       from holiday h
+                       where h.calendar_id = calendar_id
+                         and h.transfer_date is not null
+                         and h.transfer_date > firstDate
+                         AND h.transfer_date < lastDate
+                         and (DAYOFWEEK(h.date) = 7
+                           or DAYOFWEEK(h.date) = 1));
+    RETURN days;
+END; //
+DELIMITER ;
+
 drop function if exists get_working_days;
+
+DELIMITER //
+
 CREATE FUNCTION get_working_days(date date, calendar_id bigint) RETURNS INT
 BEGIN
     DECLARE days INT;
     declare firstDate date;
     declare lastDate date;
     set firstDate = date_add(date_add(LAST_DAY(date),interval 1 DAY), interval -1 MONTH);
-    set lastDate = date_add(LAST_DAY(date), interval 1 day);
-    SET days = 0;
-    set days = 5 * (DATEDIFF(lastDate, firstDate) DIV 7) + MID('0123455401234434012332340122123401101234000123450', 7 * WEEKDAY(firstDate) + WEEKDAY(lastDate) + 1, 1);
-    set days = days - (select distinct count(h.date) from holiday h where h.calendar_id = calendar_id and h.date > firstDate AND h.date  < lastDate);
-    set days = days + (select distinct count(h.transfer_date) from holiday h where h.calendar_id = calendar_id and h.transfer_date is not null and h.transfer_date > firstDate AND h.transfer_date < lastDate);
+    set lastDate = LAST_DAY(date);
+    SET days = (select get_business_days(firstDate, lastDate, calendar_id));
     RETURN days;
 END; //
 DELIMITER ;
@@ -380,9 +411,34 @@ BEGIN
 END; //
 DELIMITER ;
 
--- 21 - average working days in month
+drop function if exists get_vacation_end;
 
--- function for month hours
--- function for calculating salary
--- function for calculating rate
--- function for calculating end date of vacation
+DELIMITER //
+
+CREATE FUNCTION get_vacation_end(date date, length bigint, user bigint) RETURNS date
+BEGIN
+    DECLARE days INT;
+    DECLARE calendar_id bigint;
+    declare firstDate date;
+    declare lastDate date;
+    set calendar_id = (select calendar_id from user u where u.id = user);
+    SET days = length;
+    set days = days + (select distinct count(h.date)
+                       from holiday h
+                       where h.calendar_id = calendar_id
+                         and h.date > firstDate
+                         AND h.date < lastDate
+                         and not (DAYOFWEEK(h.date) = 7
+                           or DAYOFWEEK(h.date) = 1));
+    set days = days - (select distinct count(h.transfer_date)
+                       from holiday h
+                       where h.calendar_id = calendar_id
+                         and h.transfer_date is not null
+                         and h.transfer_date > firstDate
+                         AND h.transfer_date < lastDate
+                         and (DAYOFWEEK(h.date) = 7
+                           or DAYOFWEEK(h.date) = 1));
+    RETURN date_add(date, interval days day);
+END; //
+DELIMITER ;
+

@@ -1,5 +1,6 @@
 package by.dima.employee.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 
@@ -10,11 +11,10 @@ public class Vacation {
     @Id
     private Long id;
     private LocalDate startDate;
-//  todo add endDate, which will be calculated within function in db
     private Long length;
     private boolean approved;
     private boolean viewed;
 
-//    todo add transient user name and, email
+//    @JsonIgnore
     private Long userId;
 }
