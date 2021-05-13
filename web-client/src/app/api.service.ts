@@ -81,11 +81,11 @@ export class ApiService {
   }
 
   acceptVacation(vacationId): Observable<any> {
-    return this.http.post<any[]>(`${this.vacationUrl}/${vacationId}/accept`, this.getAuthHeaders());
+    return this.http.post<any[]>(`${this.vacationUrl}/${vacationId}/accept`, null, this.getAuthHeaders());
   }
 
   rejectVacation(vacationId): Observable<any> {
-    return this.http.post<any[]>(`${this.vacationUrl}/${vacationId}/reject`, this.getAuthHeaders());
+    return this.http.post<any[]>(`${this.vacationUrl}/${vacationId}/reject`, null, this.getAuthHeaders());
   }
 
   loadCustomers(): Observable<any[]> {

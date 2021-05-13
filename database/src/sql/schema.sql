@@ -244,6 +244,8 @@ END //
 
 DELIMITER ;
 
+drop procedure if exists approve_vacation;
+
 DELIMITER //
 
 CREATE PROCEDURE approve_vacation(vacation bigint, user_id bigint)
@@ -254,6 +256,8 @@ BEGIN
 END //
 
 DELIMITER ;
+
+drop procedure if exists reject_vacation;
 
 DELIMITER //
 
@@ -418,27 +422,29 @@ DELIMITER //
 CREATE FUNCTION get_vacation_end(date date, length bigint, user bigint) RETURNS date
 BEGIN
     DECLARE days INT;
-    DECLARE calendar_id bigint;
+    DECLARE calendar bigint;
     declare firstDate date;
     declare lastDate date;
-    set calendar_id = (select calendar_id from user u where u.id = user);
-    SET days = length;
+    set calendar = (select u.calendar_id from user u where u.id = user);
+    SET days = ((length div 5) * 7) + (IF(7 - DAYOFWEEK(date) <= (length mod 5), 2, 0));
+    set firstDate = date;
+    set lastDate = date_add(date, interval days day);
     set days = days + (select distinct count(h.date)
                        from holiday h
-                       where h.calendar_id = calendar_id
-                         and h.date > firstDate
-                         AND h.date < lastDate
+                       where h.calendar_id = calendar
+                         and h.date >= date
+                         AND h.date <= lastDate
                          and not (DAYOFWEEK(h.date) = 7
                            or DAYOFWEEK(h.date) = 1));
     set days = days - (select distinct count(h.transfer_date)
                        from holiday h
-                       where h.calendar_id = calendar_id
+                       where h.calendar_id = calendar
                          and h.transfer_date is not null
-                         and h.transfer_date > firstDate
-                         AND h.transfer_date < lastDate
-                         and (DAYOFWEEK(h.date) = 7
-                           or DAYOFWEEK(h.date) = 1));
-    RETURN date_add(date, interval days day);
+                         and h.transfer_date >= firstDate
+                         AND h.transfer_date <= lastDate
+                         and (DAYOFWEEK(h.transfer_date) = 7
+                           or DAYOFWEEK(h.transfer_date) = 1));
+    RETURN date_add(date, interval days - 1 day);
 END; //
 DELIMITER ;
 

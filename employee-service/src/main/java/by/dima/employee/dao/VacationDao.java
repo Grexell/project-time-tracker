@@ -8,9 +8,9 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 public interface VacationDao extends ReactiveCrudRepository<Vacation, Long> {
-    @Query("call approve_vacation(:#{#managerId}, :#{#vacationId})")
+    @Query("call approve_vacation(:#{#vacationId}, :#{#managerId})")
     Mono<Void> acceptVacation(Long managerId, Long vacationId);
 
-    @Query("call reject_vacation(:#{#managerId}, :#{#vacationId})")
+    @Query("call reject_vacation(:#{#vacationId}, :#{#managerId})")
     Mono<Void> rejectVacation(Long managerId, Long vacationId);
 }
