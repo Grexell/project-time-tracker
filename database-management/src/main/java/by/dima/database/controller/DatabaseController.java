@@ -2,19 +2,14 @@ package by.dima.database.controller;
 
 import com.smattme.MysqlExportService;
 import com.smattme.MysqlImportService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ByteArrayResource;
-import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.http.ZeroCopyHttpOutputMessage;
 import org.springframework.http.codec.multipart.FilePart;
-import org.springframework.http.server.ServerHttpResponse;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.r2dbc.core.DatabaseClient;
+import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 
 import java.io.File;
@@ -28,12 +23,16 @@ public class DatabaseController {
 
     private final MysqlExportService mysqlExportService;
     private final MysqlImportService mysqlImportService;
+    private final DatabaseClient client;
 
-    public DatabaseController(@Value("${database.url}") String mysqlUrl,
-                              @Value("${database.username}") String username,
-                              @Value("${database.password}") String password) {
+    @Autowired
+    public DatabaseController(@Value("${spring.r2dbc.url}") String mysqlUrl,
+                              @Value("${spring.r2dbc.username}") String username,
+                              @Value("${spring.r2dbc.password}") String password,
+                              DatabaseClient client) {
+        this.client = client;
         Properties properties = new Properties();
-        properties.setProperty(MysqlExportService.JDBC_CONNECTION_STRING, mysqlUrl);
+        properties.setProperty(MysqlExportService.JDBC_CONNECTION_STRING, mysqlUrl.replace("r2dbc", "jdbc"));
         properties.setProperty(MysqlExportService.DB_USERNAME, username);
         properties.setProperty(MysqlExportService.DB_PASSWORD, password);
         properties.setProperty(MysqlExportService.PRESERVE_GENERATED_ZIP, "true");
@@ -72,5 +71,10 @@ public class DatabaseController {
                         return false;
                     }
                 }).then();
+    }
+
+    @PostMapping("exec")
+    public Mono<Void> execute(@RequestBody String query) {
+        return client.sql(query).then();
     }
 }

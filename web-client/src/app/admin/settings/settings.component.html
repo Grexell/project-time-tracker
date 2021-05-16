@@ -1,8 +1,18 @@
 <div class="p-3">
     <div class="mat-title">Database</div>
-    <input class="d-none" id="input-file-id" type="file" #files (change)="files.files && files.files[0] && restore(files.files[0]); " />
-    <label class="mx-2 mat-raised-button" for="input-file-id">Restore Database</label>
-    <button mat-raised-button color="primary" (click)="backup()">Backup Database</button>
+    <div class="row">
+        <div class="col-3">
+            <input class="d-none" id="input-file-id" type="file" #files (change)="files.files && files.files[0] && restore(files.files[0]); " />
+            <label class="full-width mat-raised-button" for="input-file-id">Restore Database</label>
+            <button class="full-width my-3" mat-raised-button color="primary" (click)="backup()">Backup Database</button>
+            <button class="full-width" mat-raised-button color="primary" (click)="execute()">Execute</button>
+        </div>
+        <div class="col-9">
+            <mat-form-field class="full-width" appearance="outline">
+                <textarea matInput [cdkAutosizeMinRows]="6" cdkTextareaAutosize [(ngModel)]="query"></textarea>
+            </mat-form-field>
+        </div>
+    </div>
 </div>
 <div class="d-flex py-3">
     <div class="col-4 px-3">

@@ -3,6 +3,8 @@ import {MatCalendar} from "@angular/material/datepicker";
 import {ApiService} from "../../api.service";
 import { saveAs } from "file-saver";
 import {formatISO} from "date-fns";
+import {MatDialog} from "@angular/material/dialog";
+import {ConfirmDialogComponent} from "../../common/confirm-dialog/confirm-dialog.component";
 
 class Holiday {
   constructor(public id?: number, public date?: string, public transferDate?: string) {
@@ -23,10 +25,12 @@ export class SettingsComponent implements OnInit {
   transfers = new Set();
   holiday = new Holiday();
 
+  query = '';
+
   @ViewChild('files') file: ElementRef;
   @ViewChild('calendar') calendar: MatCalendar<Date>;
 
-  constructor(private api: ApiService) { }
+  constructor(private api: ApiService, public dialog: MatDialog) { }
 
   ngOnInit(): void {
     this.loadCalendars();
@@ -125,5 +129,19 @@ export class SettingsComponent implements OnInit {
 
   restore(file) {
     this.api.restoreDatabase(file).subscribe(() => this.file.nativeElement.value = '');
+  }
+
+  execute() {
+    this.dialog.open(ConfirmDialogComponent, {
+      data: {
+        action: 'Execute',
+        subject: 'Query'
+      },
+      disableClose: true
+    }).beforeClosed().subscribe(result => {
+      if (result) {
+        this.api.executeInDatabase(this.query).subscribe();
+      }
+    });
   }
 }

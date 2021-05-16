@@ -198,6 +198,10 @@ export class ApiService {
         });
   }
 
+  executeInDatabase(query) {
+    return this.http.post(`${this.databaseUrl}/exec`, query, this.getAuthHeaders());
+  }
+
   private getAuthHeaders() {
     return {headers: {'Authorization': this.token}};
   }
